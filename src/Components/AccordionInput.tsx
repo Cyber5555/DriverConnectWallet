@@ -9,7 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 const AnimatedFontAwesome = Animated.createAnimatedComponent(FontAwesome);
 
-type DataType = {
+export type DataType = {
   name: string;
   id: string;
 };
@@ -18,8 +18,8 @@ type AccordionInputProps = {
   label?: string;
   placeholder: string;
   data: DataType[];
-  value: string;
-  setValue: (text: string) => void;
+  value: DataType;
+  setValue: (data: DataType) => void;
 };
 
 const RenderItem = ({
@@ -49,7 +49,8 @@ const AccordionInputComponent = ({
   const rotateAngle = useSharedValue('0deg');
 
   const onPress = (item: DataType) => {
-    setValue(item.name);
+    setValue(item);
+    toggleHeight();
   };
 
   const flatListHeightStyle = useAnimatedStyle(() => {
@@ -65,8 +66,10 @@ const AccordionInputComponent = ({
     };
   });
 
+  const heightNumber = data.length > 4 ? 300 : 200;
+
   const toggleHeight = () => {
-    flatListHeight.value = flatListHeight.value === 0 ? 300 : 0;
+    flatListHeight.value = flatListHeight.value === 0 ? heightNumber : 0;
     flatListMargin.value = flatListMargin.value === 0 ? 10 : 0;
     toggleAngle();
   };
@@ -79,7 +82,9 @@ const AccordionInputComponent = ({
     <View style={styles.container}>
       {label && <Text style={styles.label}>{label}</Text>}
       <TouchableOpacity style={styles.touchableOpacity} onPress={toggleHeight}>
-        <Text style={styles.input}>{value ? value : placeholder}</Text>
+        <Text style={styles.input}>
+          {value.name ? value.name : placeholder}
+        </Text>
         <AnimatedFontAwesome
           name={'angle-down'}
           style={[styles.angleDown, angleStyle]}

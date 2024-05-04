@@ -4,11 +4,10 @@ import {View, Text, StyleSheet, Platform, ScrollView} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {DefaultInput} from '../../../Components/DefaultInput';
 import {DateInput} from '../../../Components/DateInput';
-import {AccordionInput} from '../../../Components/AccordionInput';
+import {AccordionInput, DataType} from '../../../Components/AccordionInput';
 import {CheckList} from '../../../Components/CheckList';
 import {useNavigation} from '@react-navigation/native';
 import {RootNavigationProps} from '../../../Router/RootNavigation';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import Colors from '../../../Includes/Colors';
 import {AdaptiveButton} from '../../../Components/AdaptiveButton';
@@ -17,42 +16,45 @@ import {AppDispatch, RootState} from '../../../store/store';
 import {getJobCategoryRequest} from './getJobCategorySlice';
 import {User, useAuth} from '../../../Context/AuthContext';
 import {regionRequest} from './regionSlice';
+import {createAccountRequest} from '../../Data/DataDriverLicense/createAccountSlice';
+import moment from 'moment';
 
 const RegisterComponent = () => {
   const dispatch = useDispatch<AppDispatch>();
   const insets = useSafeAreaInsets();
-  const {token, addRegisterData} = useAuth();
+  const {token, addRegisterData, registerData} = useAuth();
   const {jobData} = useSelector(
     (state: RootState) => state.getJobCategorySlice,
   );
   const {regionData} = useSelector((state: RootState) => state.regionSlice);
+  const {loading} = useSelector((state: RootState) => state.createAccountSlice);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootNavigationProps>>();
   const [disableButton, setDisableButton] = useState<boolean>(true);
-  const [selectedItem, setSelectedItem] = useState<number | null>(null);
+  const [selectedItem, setSelectedItem] = useState<string>('');
   const [date, setDate] = useState<Date | undefined>();
+  const [region, setRegion] = useState<DataType>({name: '', id: ''});
   const [inputData, setInputData] = useState({
     name: '',
     surName: '',
     fatherName: '',
-    region: '',
   });
 
-  const handleTextChange = (text: string, fieldName: string) => {
+  const handleTextChange = (text: string | {}, fieldName: string) => {
     setInputData({...inputData, [fieldName]: text});
   };
 
   useEffect(() => {
     dispatch(getJobCategoryRequest({token}));
     dispatch(regionRequest({token}));
-  }, [dispatch, token]);
+  }, [dispatch, registerData?.job_category_id, token]);
 
   useEffect(() => {
     const distractValues = {
       name: inputData.name,
       surname: inputData.surName,
       fatherName: inputData.fatherName,
-      region: inputData.region,
+      region: region,
       jobType: selectedItem,
       date: date,
     };
@@ -65,30 +67,56 @@ const RegisterComponent = () => {
     } else {
       setDisableButton(true);
     }
-  }, [inputData, selectedItem, date]);
+  }, [inputData, selectedItem, date, region]);
 
   const onSaveData = useCallback(() => {
-    const distractValues = {
-      name: inputData.name,
-      surname: inputData.surName,
-      fatherName: inputData.fatherName,
-      region: inputData.region,
-      jobType: selectedItem,
-      date: date,
+    const userData: User = {
+      birth_date: date,
+      region_id: region?.id,
+      job_category_id: selectedItem,
+      person_full_name_first_name: inputData.name,
+      person_full_name_last_name: inputData.surName,
+      person_full_name_middle_name: inputData.fatherName,
     };
+    addRegisterData(userData);
 
-    const registerValue: User = {registerData: distractValues};
-    addRegisterData(registerValue);
-    navigation.navigate('ScannerHome');
+    const formattedBirthDate = date
+      ? moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD')
+      : null;
+    if (selectedItem === '3') {
+      dispatch(
+        createAccountRequest({
+          token,
+          birth_date: formattedBirthDate?.toString(),
+          region_id: region?.id,
+          job_category_id: selectedItem,
+          person_full_name_first_name: inputData.name,
+          person_full_name_last_name: inputData.surName,
+          person_full_name_middle_name: inputData.fatherName,
+        }),
+      ).then((result: any) => {
+        if (result.payload.status) {
+          setTimeout(() => {
+            navigation.navigate('Home');
+          }, 1000);
+        }
+      });
+    } else {
+      setTimeout(() => {
+        navigation.navigate('ScannerHomeDriver');
+      }, 1000);
+    }
   }, [
     addRegisterData,
     date,
+    dispatch,
     inputData.fatherName,
     inputData.name,
-    inputData.region,
     inputData.surName,
     navigation,
+    region?.id,
     selectedItem,
+    token,
   ]);
 
   return (
@@ -97,13 +125,13 @@ const RegisterComponent = () => {
         styles.container,
         {paddingTop: Platform.OS === 'ios' ? insets.top : 20},
       ]}>
-      <AntDesign
+      {/* <AntDesign
         name={'arrowleft'}
         color={Colors.black}
         size={24}
         style={{marginTop: 20}}
         onPress={() => navigation.goBack()}
-      />
+      /> */}
       <Text style={styles.pageTitle}>
         Регистрация в агрегаторе: Личные данные
       </Text>
@@ -136,10 +164,10 @@ const RegisterComponent = () => {
           />
           <AccordionInput
             label={'Регион'}
-            placeholder={'Москва и Московская область'}
+            placeholder={'Не указан'}
             data={regionData}
-            setValue={text => handleTextChange(text, 'region')}
-            value={inputData.region}
+            setValue={text => setRegion(text)}
+            value={region || {name: '', id: ''}}
           />
           <CheckList
             jobData={jobData}
@@ -148,7 +176,8 @@ const RegisterComponent = () => {
           />
           <AdaptiveButton
             onPress={onSaveData}
-            disabled={disableButton}
+            loading={loading}
+            disabled={disableButton || loading}
             containerStyle={{
               backgroundColor: disableButton ? '#319240aa' : Colors.green,
             }}>
@@ -168,7 +197,7 @@ const styles = StyleSheet.create({
   pageTitle: {
     fontWeight: '400',
     fontSize: 19,
-    marginTop: 10,
+    marginTop: 20,
   },
   inputContainer: {
     marginTop: 30,

@@ -10,8 +10,8 @@ type DateInputProps = {
   label: string;
   containerStyle?: ViewStyle;
   placeholder: string;
-  date: Date | undefined;
-  setDate: Dispatch<SetStateAction<Date | undefined>>;
+  date: string | Date | undefined; // Updated type definition
+  setDate: Dispatch<SetStateAction<Date | undefined>>; // Updated type definition
 };
 
 const DateInputComponent = ({
@@ -21,7 +21,6 @@ const DateInputComponent = ({
   date,
   setDate,
 }: DateInputProps) => {
-  const [,] = useState<Date | undefined>();
   const [open, setOpen] = useState<boolean>(false);
 
   const handleDateChange = (selectedDate: Date | undefined) => {
@@ -54,9 +53,11 @@ const DateInputComponent = ({
         modal
         mode={'date'}
         open={open}
-        date={date || new Date()}
+        date={date ? new Date(date) : new Date()} // Convert to Date object if not already
         onConfirm={handleDateChange}
         onCancel={() => setOpen(false)}
+        maximumDate={new Date(Date.now() - 18 * 365 * 24 * 60 * 60 * 1000)}
+        minimumDate={new Date(Date.now() - 80 * 365 * 24 * 60 * 60 * 1000)}
       />
     </View>
   );
@@ -80,6 +81,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 8,
     fontSize: 20,
+    color: Colors.dark,
   },
   dateIcon: {
     position: 'absolute',

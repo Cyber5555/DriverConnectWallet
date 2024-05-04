@@ -9,13 +9,12 @@ import {AdaptiveButton} from '../../Components/AdaptiveButton';
 import {RootNavigationProps} from '../../Router/RootNavigation';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 
-const ScannerHomeComponent = () => {
+const ScannerHomeDriverComponent = () => {
   const insets = useSafeAreaInsets();
-
-  // const [device, setDevice] = useState(undefined as CameraDevice | undefined);
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootNavigationProps>>();
+
   return (
     <View
       style={[
@@ -50,8 +49,7 @@ const ScannerHomeComponent = () => {
         <AdaptiveButton
           containerStyle={{backgroundColor: Colors.lightYellow}}
           textStyle={{color: Colors.black}}
-          // onPress={() => navigation.navigate('CameraScreen')}>
-          onPress={() => navigation.navigate('CameraScreen')}>
+          onPress={() => navigation.navigate('CameraScreenDriver')}>
           Сделать фото
         </AdaptiveButton>
       </View>
@@ -92,4 +90,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export const ScannerHome = memo(ScannerHomeComponent);
+export const ScannerHomeDriver = memo(ScannerHomeDriverComponent);

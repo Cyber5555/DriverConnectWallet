@@ -11,17 +11,16 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.23.1",
-    "@react-native-community/clipboard": "^1.5.1",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",
     "@reduxjs/toolkit": "^2.2.3",
-    "@shopify/react-native-skia": "^1.2.3",
     "@types/react-redux": "^7.1.33",
     "axios": "^1.6.8",
     "moment": "^2.30.1",
     "react": "18.2.0",
     "react-native": "^0.73.7",
     "react-native-date-picker": "^5.0.2",
+    "react-native-document-scanner-plugin": "^1.0.0",
     "react-native-gesture-handler": "^2.16.0",
     "react-native-mask-input": "^1.2.3",
     "react-native-otp-textinput": "^1.1.5",
@@ -31,10 +30,7 @@
     "react-native-svg": "^15.1.0",
     "react-native-vector-icons": "^10.0.3",
     "react-native-vision-camera": "^4.0.1",
-    "react-native-worklets-core": "^1.1.1",
-    "react-redux": "^9.1.1",
-    "vision-camera-cropper": "^1.0.0",
-    "vision-camera-dynamsoft-label-recognizer": "^2.0.0"
+    "react-redux": "^9.1.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

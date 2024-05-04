@@ -15,8 +15,8 @@ type DataType = {
 
 type CheckLIstProps = {
   jobData: DataType[];
-  selectedItem: number | null;
-  setSelectedItem: Dispatch<SetStateAction<number | null>> | (() => void);
+  selectedItem: string;
+  setSelectedItem: Dispatch<SetStateAction<string>> | (() => void);
 };
 
 const CheckLIstComponent = ({
@@ -28,30 +28,37 @@ const CheckLIstComponent = ({
   const itemWidth = width / 2 - 25;
 
   const selectItem = useCallback(
-    (index: number) => {
-      setSelectedItem((prevSelected: number | null) =>
-        prevSelected === index ? null : index,
+    (id: string) => {
+      setSelectedItem((prevSelected: string) =>
+        prevSelected === id ? '' : id,
       );
     },
     [setSelectedItem],
   );
 
-  const renderItem = ({item, index}: {item: DataType; index: number}) => {
+  const renderItem = ({item}: {item: DataType}) => {
     return (
       <Pressable
-        onPress={() => selectItem(index)}
+        onPress={() => selectItem(item.id.toString())}
         style={[
           styles.renderItem,
           {
             width: itemWidth,
             backgroundColor:
-              index === selectedItem ? Colors.lightBlue : Colors.gray,
+              item.id.toString() === selectedItem
+                ? Colors.lightBlue
+                : Colors.gray,
           },
         ]}>
         <Text
           style={[
             styles.renderItemText,
-            {color: index === selectedItem ? Colors.white : Colors.black},
+            {
+              color:
+                item.id.toString() === selectedItem
+                  ? Colors.white
+                  : Colors.black,
+            },
           ]}>
           {item.name}
         </Text>
@@ -63,8 +70,8 @@ const CheckLIstComponent = ({
     <View style={styles.container}>
       <Text style={styles.checkListTitle}>Кем хотите стать?</Text>
       <View style={styles.checkListContainer}>
-        {jobData.map((item, index) => (
-          <View key={item.id}>{renderItem({item, index})}</View>
+        {jobData.map(item => (
+          <View key={item.id}>{renderItem({item})}</View>
         ))}
       </View>
     </View>

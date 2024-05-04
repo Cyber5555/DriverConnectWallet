@@ -1,5 +1,11 @@
 import React, {memo} from 'react';
-import {View, StyleSheet, ViewStyle, TextInput} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ViewStyle,
+  TextInput,
+  KeyboardTypeOptions,
+} from 'react-native';
 import Colors from '../Includes/Colors';
 
 type DefaultInputProps = {
@@ -7,6 +13,7 @@ type DefaultInputProps = {
   placeholder: string;
   onChangeText: (text: string) => void;
   value: string;
+  keyboardType?: KeyboardTypeOptions;
 };
 
 const DefaultInputComponent = ({
@@ -14,6 +21,7 @@ const DefaultInputComponent = ({
   placeholder,
   onChangeText,
   value,
+  keyboardType = 'default',
 }: DefaultInputProps) => {
   return (
     <View style={{...styles.container, ...containerStyle}}>
@@ -23,7 +31,7 @@ const DefaultInputComponent = ({
         onChangeText={onChangeText}
         placeholder={placeholder}
         placeholderTextColor={Colors.dark}
-        keyboardType={'default'}
+        keyboardType={keyboardType}
       />
     </View>
   );
@@ -41,6 +49,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 8,
     fontSize: 20,
+    color: Colors.dark,
   },
 });
 

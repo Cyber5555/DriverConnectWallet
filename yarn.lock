@@ -1690,11 +1690,6 @@
     prompts "^2.4.2"
     semver "^7.5.2"
 
-"@react-native-community/clipboard@^1.5.1":
-  version "1.5.1"
-  resolved "https://registry.yarnpkg.com/@react-native-community/clipboard/-/clipboard-1.5.1.tgz#32abb3ea2eb91ee3f9c5fb1d32d5783253c9fabe"
-  integrity sha512-AHAmrkLEH5UtPaDiRqoULERHh3oNv7Dgs0bTC0hO5Z2GdNokAMPT5w8ci8aMcRemcwbtdHjxChgtjbeA38GBdA==
-
 "@react-native/assets-registry@0.73.1":
   version "0.73.1"
   resolved "https://registry.yarnpkg.com/@react-native/assets-registry/-/assets-registry-0.73.1.tgz#e2a6b73b16c183a270f338dc69c36039b3946e85"
@@ -1930,14 +1925,6 @@
     redux "^5.0.1"
     redux-thunk "^3.1.0"
     reselect "^5.0.1"
-
-"@shopify/react-native-skia@^1.2.3":
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/@shopify/react-native-skia/-/react-native-skia-1.2.3.tgz#d87efd01c362b69f62375ce950c30e453586d6f9"
-  integrity sha512-gyUD/HGsMyZ+YAoWxVh24HYN5juwC/dZWINL/0sKP7Ttee/0igCRxWPneH1BbVH28dhyf+tvksQNUwpMM3VWbg==
-  dependencies:
-    canvaskit-wasm "0.39.1"
-    react-reconciler "0.27.0"
 
 "@sideway/address@^4.1.5":
   version "4.1.5"
@@ -2323,11 +2310,6 @@
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz#756641adb587851b5ccb3e095daf27ae581c8406"
   integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
-
-"@webgpu/types@0.1.21":
-  version "0.1.21"
-  resolved "https://registry.yarnpkg.com/@webgpu/types/-/types-0.1.21.tgz#b181202daec30d66ccd67264de23814cfd176d3a"
-  integrity sha512-pUrWq3V5PiSGFLeLxoGqReTZmiiXwY3jRkIG5sLLKjyqNxrwm/04b4nw7LSmGWJcKk59XOM/YRTUwOzo4MMlow==
 
 abort-controller@^3.0.0:
   version "3.0.0"
@@ -2793,13 +2775,6 @@ caniuse-lite@^1.0.30001587:
   version "1.0.30001614"
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001614.tgz#f894b4209376a0bf923d67d9c361d96b1dfebe39"
   integrity sha512-jmZQ1VpmlRwHgdP1/uiKzgiAuGOfLEJsYFP4+GBou/QQ4U6IOJCB4NP1c+1p9RGLpwObcT94jA5/uO+F1vBbog==
-
-canvaskit-wasm@0.39.1:
-  version "0.39.1"
-  resolved "https://registry.yarnpkg.com/canvaskit-wasm/-/canvaskit-wasm-0.39.1.tgz#c3c8f3962cbabbedf246f7bcf90e859013c7eae9"
-  integrity sha512-Gy3lCmhUdKq+8bvDrs9t8+qf7RvcjuQn+we7vTVVyqgOVO1UVfHpsnBxkTZw+R4ApEJ3D5fKySl9TU11hmjl/A==
-  dependencies:
-    "@webgpu/types" "0.1.21"
 
 chalk@^2.4.2:
   version "2.4.2"
@@ -6049,6 +6024,11 @@ react-native-date-picker@^5.0.2:
   resolved "https://registry.yarnpkg.com/react-native-date-picker/-/react-native-date-picker-5.0.2.tgz#7a9cc42c086fe1ebfe39d2f431f523d924239ae6"
   integrity sha512-ZibwqA+6W+uOLzeblsKnMQT2zZpnOw/tKFotgyrLZuTPTcwMvnnlzi5QhSjB203PhyFEElbcFrIuHJQpb/Zahw==
 
+react-native-document-scanner-plugin@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-document-scanner-plugin/-/react-native-document-scanner-plugin-1.0.0.tgz#e82b66b1835bfd49444df73a1e1533dbfb1f0b57"
+  integrity sha512-dDsSclFpxl4U0Bnz/oEE0OEEqEjA6zNCu/2lmls4lslq3JqgHacI8xEl5DygMHd4AlDj3X4g1yKUacllfaC+UA==
+
 react-native-dotenv@^3.4.11:
   version "3.4.11"
   resolved "https://registry.yarnpkg.com/react-native-dotenv/-/react-native-dotenv-3.4.11.tgz#2e6c4eabd55d5f1bf109b3dd9141dadf9c55cdd4"
@@ -6137,13 +6117,6 @@ react-native-vision-camera@^4.0.1:
   resolved "https://registry.yarnpkg.com/react-native-vision-camera/-/react-native-vision-camera-4.0.1.tgz#045c8ff9c236d3bf7e1dba24172a4c11b19bbd37"
   integrity sha512-TuXLw/ak+LPaJOCuUaYG1g2EmTAEEeIVAhSbCsqEHlklMjkO0oRBGcPC6HpKw3++jkcKRBVVyY48HbB002UZfg==
 
-react-native-worklets-core@^1.1.1:
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-worklets-core/-/react-native-worklets-core-1.2.0.tgz#155040a48d1e3f66107544867ec579c2f5044271"
-  integrity sha512-Uuf1Hg4V1w4I8eYNinwnnf+h+2YdQgwkUDQszY2yEEXWPWcZBWec0xjYn079RFRcKmGWuJ/zOtokjwy/IjJ9Fw==
-  dependencies:
-    string-hash-64 "^1.0.3"
-
 react-native@^0.73.7:
   version "0.73.7"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.73.7.tgz#88cc4b6b1b2a0618694f4a6d265cf5f790f72525"
@@ -6187,14 +6160,6 @@ react-native@^0.73.7:
     whatwg-fetch "^3.0.0"
     ws "^6.2.2"
     yargs "^17.6.2"
-
-react-reconciler@0.27.0:
-  version "0.27.0"
-  resolved "https://registry.yarnpkg.com/react-reconciler/-/react-reconciler-0.27.0.tgz#360124fdf2d76447c7491ee5f0e04503ed9acf5b"
-  integrity sha512-HmMDKciQjYmBRGuuhIaKA1ba/7a+UsM5FzOZsMO2JYHt9Jh8reCb7j1eDC95NOyUlKM9KRyvdx0flBuDvYSBoA==
-  dependencies:
-    loose-envify "^1.1.0"
-    scheduler "^0.21.0"
 
 react-redux@^9.1.1:
   version "9.1.1"
@@ -6495,13 +6460,6 @@ scheduler@0.24.0-canary-efb381bbf-20230505:
   dependencies:
     loose-envify "^1.1.0"
 
-scheduler@^0.21.0:
-  version "0.21.0"
-  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.21.0.tgz#6fd2532ff5a6d877b6edb12f00d8ab7e8f308820"
-  integrity sha512-1r87x5fz9MXqswA2ERLo0EbOAU74DpIUO090gIasYTqlVoJeMcl+Z1Rg7WHz+qtPujhS/hGIt9kxZOYBV3faRQ==
-  dependencies:
-    loose-envify "^1.1.0"
-
 scheduler@^0.23.0:
   version "0.23.2"
   resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.23.2.tgz#414ba64a3b282892e944cf2108ecc078d115cdc3"
@@ -6737,11 +6695,6 @@ strict-uri-encode@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/strict-uri-encode/-/strict-uri-encode-2.0.0.tgz#b9c7330c7042862f6b142dc274bbcc5866ce3546"
   integrity sha512-QwiXZgpRcKkhTj2Scnn++4PKtWsH0kpzZ62L2R6c/LUVYv7hVnZqcg2+sMuT6R7Jusu1vviK/MFsu6kNJfWlEQ==
-
-string-hash-64@^1.0.3:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/string-hash-64/-/string-hash-64-1.0.3.tgz#0deb56df58678640db5c479ccbbb597aaa0de322"
-  integrity sha512-D5OKWKvDhyVWWn2x5Y9b+37NUllks34q1dCDhk/vYcso9fmhs+Tl3KR/gE4v5UNj2UA35cnX4KdVVGkG1deKqw==
 
 string-length@^4.0.1:
   version "4.0.2"
@@ -7173,16 +7126,6 @@ vary@~1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
-
-vision-camera-cropper@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/vision-camera-cropper/-/vision-camera-cropper-1.0.0.tgz#0015e88690eb13b61f757b52a4bccc3158390413"
-  integrity sha512-PADX9NLb+2MVOerGflFxk44lyc7W56W5RXY4eOBY1H4ZpUB9mk1nys0PfJSbw8Id7NBifhmlVcBdCefMOUrvtQ==
-
-vision-camera-dynamsoft-label-recognizer@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/vision-camera-dynamsoft-label-recognizer/-/vision-camera-dynamsoft-label-recognizer-2.0.0.tgz#a76bb92a774375c0063d6ce34b2b00c3d0248f24"
-  integrity sha512-YqVcntpjfm3s0MZ0flbgDuwRqpMVG9B1/K+Css/TJU/Xf0BnMbP9y59EiTdmpFM5TLHDfgrA/VwrSaIE5kTuLw==
 
 vlq@^1.0.0:
   version "1.0.1"

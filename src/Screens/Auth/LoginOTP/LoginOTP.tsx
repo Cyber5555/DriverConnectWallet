@@ -13,6 +13,7 @@ import {
   Keyboard,
   Alert,
   Vibration,
+  TouchableOpacity,
 } from 'react-native';
 import Colors from '../../../Includes/Colors';
 import {AdaptiveButton} from '../../../Components/AdaptiveButton';
@@ -95,11 +96,16 @@ const LoginOTPComponent = () => {
       const userToken: User = {token: token};
       login(userToken);
       dispatch(clearError());
-      if (user.create_account_status === 0) {
-        navigation.navigate('Register');
-      } else if (user.add_car_status && user.create_account_status) {
-        navigation.navigate('DataAuto');
-      }
+
+      // if (user.create_account_status === '0') {
+      navigation.navigate('Register');
+
+      // } else if (
+      //   user.add_car_status === '0' &&
+      //   user.create_account_status === '1'
+      // ) {
+      //   navigation.navigate('ScannerHomeTechnical');
+      // }
     }
   }, [error.message, successCode, token]);
 
@@ -134,9 +140,9 @@ const LoginOTPComponent = () => {
             SMS с кодом авторизации отправлено на указанный номер телефона. Для
             входа в аккаунт введите его в поле ниже.
           </Text>
-          <Text dataDetectorType={'link'} style={styles.falseNumber}>
-            Неверный номер?
-          </Text>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Text style={styles.falseNumber}>Неверный номер?</Text>
+          </TouchableOpacity>
           <OTPTextInput
             containerStyle={styles.inputContainerStyle}
             textInputStyle={styles.textInputStyle}
@@ -158,17 +164,19 @@ const LoginOTPComponent = () => {
             }
             ref={otpInputRef}
           />
-          <AdaptiveButton
-            disabled={inputValue.length < 6 ? true : false}
-            loading={loading}
-            containerStyle={{
-              marginBottom: 10,
-              backgroundColor:
-                inputValue.length < 6 ? '#319240aa' : Colors.green,
-            }}
-            onPress={sendCode}>
-            ДАЛЕЕ
-          </AdaptiveButton>
+          {inputValue.length === 6 && (
+            <AdaptiveButton
+              disabled={inputValue.length < 6 ? true : false}
+              loading={loading}
+              containerStyle={{
+                marginBottom: 10,
+                backgroundColor:
+                  inputValue.length < 6 ? '#319240aa' : Colors.green,
+              }}
+              onPress={sendCode}>
+              ДАЛЕЕ
+            </AdaptiveButton>
+          )}
 
           <CountdownTimer duration={60} onResend={handleResendOTP} />
         </View>
@@ -218,6 +226,7 @@ const styles = StyleSheet.create({
   textInputStyle: {
     borderRadius: 8,
     backgroundColor: Colors.gray,
+    color: Colors.dark,
     borderWidth: 1,
     margin: 0,
   },

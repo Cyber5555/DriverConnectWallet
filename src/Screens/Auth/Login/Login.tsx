@@ -10,6 +10,7 @@ import {
   View,
   ScrollView,
   Keyboard,
+  Linking,
 } from 'react-native';
 import Colors from '../../../Includes/Colors';
 import {LoginInput} from '../../../Components/LoginInput';
@@ -22,10 +23,14 @@ import {RootNavigationProps} from '../../../Router/RootNavigation';
 import {useDispatch, useSelector} from 'react-redux';
 import {LoginPayload, loginRequest} from './loginSlice';
 import {AppDispatch, RootState} from '../../../store/store';
+import {socialDataRequest} from './socialDataSlice';
 
 const LoginComponent = () => {
   const dispatch = useDispatch<AppDispatch>();
   const {loading, error} = useSelector((state: RootState) => state.loginSlice);
+  const {telegram, whatsApp} = useSelector(
+    (state: RootState) => state.socialDataSlice,
+  );
   const [phone, setPhone] = useState<string>('');
   const [unmaskedPhone, setUnmaskedPhone] = useState<string>('');
   const [lengthError, setLengthError] = useState<boolean>(false);
@@ -47,6 +52,10 @@ const LoginComponent = () => {
     };
   }, []);
 
+  useEffect(() => {
+    dispatch(socialDataRequest());
+  }, [dispatch]);
+
   const sendData = useCallback(() => {
     if (unmaskedPhone.length === 10) {
       dispatch(loginRequest({phone: unmaskedPhone})).then(result => {
@@ -66,6 +75,14 @@ const LoginComponent = () => {
       setLengthError(true);
     }
   }, [dispatch, navigation, unmaskedPhone]);
+
+  const linkToTelegram = useCallback(() => {
+    Linking.openURL(telegram);
+  }, [telegram]);
+
+  const linkToWhatsApp = useCallback(() => {
+    Linking.openURL(whatsApp);
+  }, [whatsApp]);
 
   return (
     <KeyboardAvoidingView
@@ -104,8 +121,13 @@ const LoginComponent = () => {
             «Есть вопросы? Напишите нам!»
           </Text>
           <View style={styles.wrapperIcons}>
-            <FontAwesome name={'telegram'} color={Colors.lightBlue} size={50} />
-            <WhatsAppIcon width={60} height={60} />
+            <FontAwesome
+              name={'telegram'}
+              color={Colors.lightBlue}
+              size={50}
+              onPress={linkToTelegram}
+            />
+            <WhatsAppIcon width={60} height={60} onPress={linkToWhatsApp} />
           </View>
         </View>
       </ScrollView>

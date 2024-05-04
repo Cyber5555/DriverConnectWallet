@@ -80,6 +80,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     backgroundColor: Colors.gray,
+    color: Colors.dark,
     paddingHorizontal: 10,
     borderRadius: 8,
     fontSize: 20,
