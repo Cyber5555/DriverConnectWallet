@@ -3,7 +3,7 @@ import {User} from '../../../Context/AuthContext';
 import {Http} from '../../../../http';
 
 interface GetCarMarksData {
-  token: User | null;
+  authUser: User | null;
 }
 
 interface GetCarMarksPayload {
@@ -24,22 +24,25 @@ const initialState: GetCarMarksState = {
 export const getCarMarksRequest = createAsyncThunk<
   GetCarMarksPayload,
   GetCarMarksData
->('getCarMarks/getCarMarksRequest', async ({token}, {rejectWithValue}: any) => {
-  const headers = {
-    'Content-type': 'application/json',
-    Authorization: `Bearer ${token?.token}`,
-  };
+>(
+  'getCarMarks/getCarMarksRequest',
+  async ({authUser}, {rejectWithValue}: any) => {
+    const headers = {
+      'Content-type': 'application/json',
+      Authorization: `Bearer ${authUser?.token}`,
+    };
 
-  try {
-    const response = await Http.get(
-      `${process.env.API_URL}get_car_marks`,
-      headers,
-    );
-    return response.data;
-  } catch (error: any) {
-    return rejectWithValue(error.response.data);
-  }
-});
+    try {
+      const response = await Http.get(
+        `${process.env.API_URL}get_car_marks`,
+        headers,
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response.data);
+    }
+  },
+);
 
 const getCarMarksSlice = createSlice({
   name: 'getCarMarks',

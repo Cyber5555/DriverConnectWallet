@@ -18,11 +18,12 @@ import {User, useAuth} from '../../../Context/AuthContext';
 import {regionRequest} from './regionSlice';
 import {createAccountRequest} from '../../Data/DataDriverLicense/createAccountSlice';
 import moment from 'moment';
+import {SuccessAuthModal} from '../../../Components/SuccessAuthModal';
 
 const RegisterComponent = () => {
   const dispatch = useDispatch<AppDispatch>();
   const insets = useSafeAreaInsets();
-  const {token, addRegisterData, registerData} = useAuth();
+  const {authUser, login} = useAuth();
   const {jobData} = useSelector(
     (state: RootState) => state.getJobCategorySlice,
   );
@@ -34,6 +35,7 @@ const RegisterComponent = () => {
   const [selectedItem, setSelectedItem] = useState<string>('');
   const [date, setDate] = useState<Date | undefined>();
   const [region, setRegion] = useState<DataType>({name: '', id: ''});
+  const [successModal, setSuccessModal] = useState<boolean>(false);
   const [inputData, setInputData] = useState({
     name: '',
     surName: '',
@@ -45,9 +47,9 @@ const RegisterComponent = () => {
   };
 
   useEffect(() => {
-    dispatch(getJobCategoryRequest({token}));
-    dispatch(regionRequest({token}));
-  }, [dispatch, registerData?.job_category_id, token]);
+    dispatch(getJobCategoryRequest({authUser}));
+    dispatch(regionRequest({authUser}));
+  }, [authUser, dispatch]);
 
   useEffect(() => {
     const distractValues = {
@@ -78,7 +80,7 @@ const RegisterComponent = () => {
       person_full_name_last_name: inputData.surName,
       person_full_name_middle_name: inputData.fatherName,
     };
-    addRegisterData(userData);
+    login(userData);
 
     const formattedBirthDate = date
       ? moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD')
@@ -86,7 +88,7 @@ const RegisterComponent = () => {
     if (selectedItem === '3') {
       dispatch(
         createAccountRequest({
-          token,
+          authUser,
           birth_date: formattedBirthDate?.toString(),
           region_id: region?.id,
           job_category_id: selectedItem,
@@ -94,11 +96,9 @@ const RegisterComponent = () => {
           person_full_name_last_name: inputData.surName,
           person_full_name_middle_name: inputData.fatherName,
         }),
-      ).then((result: any) => {
+      ).then((result: {payload: any}) => {
         if (result.payload.status) {
-          setTimeout(() => {
-            navigation.navigate('Home');
-          }, 1000);
+          setSuccessModal(true);
         }
       });
     } else {
@@ -107,16 +107,16 @@ const RegisterComponent = () => {
       }, 1000);
     }
   }, [
-    addRegisterData,
     date,
-    dispatch,
-    inputData.fatherName,
-    inputData.name,
-    inputData.surName,
-    navigation,
     region?.id,
     selectedItem,
-    token,
+    inputData.name,
+    inputData.surName,
+    inputData.fatherName,
+    login,
+    dispatch,
+    authUser,
+    navigation,
   ]);
 
   return (
@@ -132,6 +132,13 @@ const RegisterComponent = () => {
         style={{marginTop: 20}}
         onPress={() => navigation.goBack()}
       /> */}
+      <SuccessAuthModal
+        visible={successModal}
+        onPress={() => {
+          setSuccessModal(false);
+          navigation.navigate('Home');
+        }}
+      />
       <Text style={styles.pageTitle}>
         Регистрация в агрегаторе: Личные данные
       </Text>

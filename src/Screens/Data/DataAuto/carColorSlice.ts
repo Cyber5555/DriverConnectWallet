@@ -3,7 +3,7 @@ import {User} from '../../../Context/AuthContext';
 import {Http} from '../../../../http';
 
 interface CarColorData {
-  token: User | null;
+  authUser: User | null;
 }
 
 interface CarColorPayload {
@@ -23,10 +23,10 @@ const initialState: CarColorState = {
 
 export const carColorRequest = createAsyncThunk<CarColorPayload, CarColorData>(
   'carColor/carColorRequest',
-  async ({token}, {rejectWithValue}: any) => {
+  async ({authUser}, {rejectWithValue}: any) => {
     const headers = {
       'Content-type': 'application/json',
-      Authorization: `Bearer ${token?.token}`,
+      Authorization: `Bearer ${authUser?.token}`,
     };
 
     try {

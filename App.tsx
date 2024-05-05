@@ -7,6 +7,8 @@ import {Provider} from 'react-redux';
 import store from './src/store/store';
 import {AuthProvider} from './src/Context/AuthContext';
 import RootNavigation from './src/Router/RootNavigation';
+import {StatusBar} from 'react-native';
+import {NavigationContainer} from '@react-navigation/native';
 
 enableScreens();
 
@@ -15,9 +17,16 @@ const App = () => {
     <SafeAreaProvider>
       <GestureHandlerRootView style={{flex: 1}}>
         <Provider store={store}>
-          <AuthProvider>
-            <RootNavigation />
-          </AuthProvider>
+          <NavigationContainer>
+            <AuthProvider>
+              <StatusBar
+                translucent={true}
+                backgroundColor={'transparent'}
+                barStyle={'dark-content'}
+              />
+              <RootNavigation />
+            </AuthProvider>
+          </NavigationContainer>
         </Provider>
       </GestureHandlerRootView>
     </SafeAreaProvider>

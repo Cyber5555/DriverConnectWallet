@@ -4,7 +4,7 @@ import {Http} from '../../../http';
 import {User} from '../../Context/AuthContext';
 
 interface DriverLicenseCountryData {
-  token: User | null;
+  authUser: User | null;
 }
 
 interface DriverLicenseCountryPayload {
@@ -25,10 +25,10 @@ export const driverLicenseCountryRequest = createAsyncThunk<
   DriverLicenseCountryData
 >(
   'driverLicenseCountry/driverLicenseCountryRequest',
-  async ({token}, {rejectWithValue}: any) => {
+  async ({authUser}, {rejectWithValue}: any) => {
     const headers = {
       'Content-type': 'application/json',
-      Authorization: `Bearer ${token?.token}`,
+      Authorization: `Bearer ${authUser?.token}`,
     };
 
     try {

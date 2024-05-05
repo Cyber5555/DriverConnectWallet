@@ -3,7 +3,7 @@ import {Http} from '../../../../http';
 import {User} from '../../../Context/AuthContext';
 
 interface RegionData {
-  token: User | null;
+  authUser: User | null;
 }
 
 interface RegionPayload {
@@ -21,10 +21,10 @@ const initialState: RegionState = {
 
 export const regionRequest = createAsyncThunk<RegionPayload, RegionData>(
   'region/regionRequest',
-  async ({token}, {rejectWithValue}: any) => {
+  async ({authUser}, {rejectWithValue}: any) => {
     const headers = {
       'Content-type': 'application/json',
-      Authorization: `Bearer ${token?.token}`,
+      Authorization: `Bearer ${authUser?.token}`,
     };
 
     try {

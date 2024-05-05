@@ -34,7 +34,7 @@ const dataYear: DataType[] = Array.from({length: yearsCount}, (_, index) => {
 });
 
 const DataDriverLicenseComponent = () => {
-  const {token, registerData, addRegisterData} = useAuth();
+  const {authUser, login} = useAuth();
   const dispatch = useDispatch<AppDispatch>();
   const insets = useSafeAreaInsets();
   const {driverLicenseCountryData} = useSelector(
@@ -60,8 +60,8 @@ const DataDriverLicenseComponent = () => {
   } = useSelector((state: RootState) => state.sendDriverLicenseSlice);
 
   useEffect(() => {
-    dispatch(driverLicenseCountryRequest({token}));
-  }, [dispatch, token]);
+    dispatch(driverLicenseCountryRequest({authUser}));
+  }, [authUser, dispatch]);
 
   useEffect(() => {
     // Convert date strings to Date objects
@@ -105,33 +105,31 @@ const DataDriverLicenseComponent = () => {
 
   const sendData = useCallback(() => {
     if (!disableButton) {
-      const formattedBirthDate = registerData?.birth_date
-        ? moment(registerData.birth_date, 'YYYY-MM-DD').format('YYYY-MM-DD')
+      const formattedBirthDate = authUser?.birth_date
+        ? moment(authUser.birth_date, 'YYYY-MM-DD').format('YYYY-MM-DD')
         : null;
 
       dispatch(
         createAccountRequest({
-          token,
+          authUser,
           birth_date: formattedBirthDate?.toString(),
           country_id: region?.id,
           driver_license_experience_total_since_date: Number(year.name),
           driver_license_expiry_date: moment(dateFirst).format('YYYY-MM-DD'),
           driver_license_issue_date: moment(dateFirst).format('YYYY-MM-DD'),
           driver_license_number: licenseNumber,
-          job_category_id: registerData?.job_category_id,
-          person_full_name_first_name:
-            registerData?.person_full_name_first_name,
-          person_full_name_last_name: registerData?.person_full_name_last_name,
-          person_full_name_middle_name:
-            registerData?.person_full_name_middle_name,
-          region_id: registerData?.region_id,
+          job_category_id: authUser?.job_category_id,
+          person_full_name_first_name: authUser?.person_full_name_first_name,
+          person_full_name_last_name: authUser?.person_full_name_last_name,
+          person_full_name_middle_name: authUser?.person_full_name_middle_name,
+          region_id: authUser?.region_id,
           scanning_person_full_name_first_name,
           scanning_person_full_name_last_name,
           scanning_person_full_name_middle_name,
         }),
       ).then((result: any) => {
         if (result.payload.status) {
-          dispatch(authUserInfoRequest({token})).then((res: any) => {
+          dispatch(authUserInfoRequest({authUser})).then((res: any) => {
             if (res.payload.status) {
               navigation.navigate('ScannerHomeTechnical');
             }
@@ -140,23 +138,17 @@ const DataDriverLicenseComponent = () => {
       });
     }
   }, [
-    dateFirst,
     disableButton,
+    authUser,
     dispatch,
-    licenseNumber,
-    navigation,
     region?.id,
-    registerData?.birth_date,
-    registerData?.job_category_id,
-    registerData?.person_full_name_first_name,
-    registerData?.person_full_name_last_name,
-    registerData?.person_full_name_middle_name,
-    registerData?.region_id,
+    year.name,
+    dateFirst,
+    licenseNumber,
     scanning_person_full_name_first_name,
     scanning_person_full_name_last_name,
     scanning_person_full_name_middle_name,
-    token,
-    year.name,
+    navigation,
   ]);
 
   return (
@@ -208,7 +200,7 @@ const DataDriverLicenseComponent = () => {
             const userData: User = {
               country_id: region?.id,
             };
-            addRegisterData(userData);
+            login(userData);
           }}
           value={region || {name: '', id: ''}}
         />

@@ -3,7 +3,7 @@ import {User} from '../../../Context/AuthContext';
 import {Http} from '../../../../http';
 
 interface CreateAccountData {
-  token: User | null;
+  authUser: User | null;
   job_category_id?: string | undefined;
   region_id?: string | undefined;
   birth_date?: Date | string | undefined;
@@ -40,7 +40,7 @@ export const createAccountRequest = createAsyncThunk<
   'createAccount/createAccountRequest',
   async (
     {
-      token,
+      authUser,
       birth_date,
       country_id,
       driver_license_experience_total_since_date,
@@ -60,7 +60,7 @@ export const createAccountRequest = createAsyncThunk<
   ) => {
     const headers = {
       'Content-type': 'application/json',
-      Authorization: `Bearer ${token?.token}`,
+      Authorization: `Bearer ${authUser?.token}`,
     };
 
     try {

@@ -11,7 +11,7 @@ interface CreateNewCarData {
   year: number;
   vin: string;
   color_name: string;
-  token: User | null;
+  authUser: User | null;
   car_license_front_photo: string | undefined;
   car_license_back_photo: string | undefined;
 }
@@ -38,7 +38,7 @@ export const createNewCarRequest = createAsyncThunk<
   'createNewCar/createNewCarRequest',
   async (
     {
-      token,
+      authUser,
       callsign,
       color_name,
       licence_plate_number,
@@ -53,7 +53,7 @@ export const createNewCarRequest = createAsyncThunk<
   ) => {
     const headers = {
       'Content-type': 'application/json',
-      Authorization: `Bearer ${token?.token}`,
+      Authorization: `Bearer ${authUser?.token}`,
     };
 
     try {

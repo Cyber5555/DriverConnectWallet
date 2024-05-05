@@ -3,7 +3,7 @@ import {Http} from '../../../../http';
 import {User} from '../../../Context/AuthContext';
 
 interface LoginOTPData {
-  token: User | null;
+  authUser: User | null;
 }
 
 interface LoginOTPPayload {
@@ -24,10 +24,10 @@ export const getJobCategoryRequest = createAsyncThunk<
   LoginOTPData
 >(
   'getJobCategory/getJobCategoryRequest',
-  async ({token}, {rejectWithValue}: any) => {
+  async ({authUser}, {rejectWithValue}: any) => {
     const headers = {
       'Content-type': 'application/json',
-      Authorization: `Bearer ${token?.token}`,
+      Authorization: `Bearer ${authUser?.token}`,
     };
 
     try {

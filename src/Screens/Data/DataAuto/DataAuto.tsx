@@ -30,10 +30,10 @@ type DataAutoProps = {};
 const DataAutoComponent = ({}: DataAutoProps) => {
   const insets = useSafeAreaInsets();
   const dispatch = useDispatch<AppDispatch>();
-  const {token, registerData} = useAuth();
+  const {authUser} = useAuth();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootNavigationProps>>();
-  const {technical_data} = useSelector(
+  const {technical_data, loading} = useSelector(
     (state: RootState) => state.sendTechnicalPassportSlice,
   );
   const {car_marks, loadingMarks} = useSelector(
@@ -78,7 +78,7 @@ const DataAutoComponent = ({}: DataAutoProps) => {
 
   const getModel = useCallback(
     (markItem: any) => {
-      dispatch(getCarModelRequest({token, mark_id: markItem.id})).then(
+      dispatch(getCarModelRequest({authUser, mark_id: markItem.id})).then(
         (resultModes: any) => {
           if (resultModes.payload.status) {
             const model = resultModes.payload.data;
@@ -88,7 +88,7 @@ const DataAutoComponent = ({}: DataAutoProps) => {
                 technical_data.model_name.toLowerCase(),
             );
             setCarModels(modelItem);
-            dispatch(carColorRequest({token})).then((resultColor: any) => {
+            dispatch(carColorRequest({authUser})).then((resultColor: any) => {
               if (resultColor.payload.status) {
                 const color = resultColor.payload.data;
                 const colorItem: any = Object.values(color).find(
@@ -104,11 +104,11 @@ const DataAutoComponent = ({}: DataAutoProps) => {
         },
       );
     },
-    [dispatch, technical_data.color_name, technical_data.model_name, token],
+    [authUser, dispatch, technical_data.color_name, technical_data.model_name],
   );
 
   useEffect(() => {
-    dispatch(getCarMarksRequest({token})).then((resultMarks: any) => {
+    dispatch(getCarMarksRequest({authUser})).then((resultMarks: any) => {
       if (resultMarks.payload.status) {
         const mark = resultMarks.payload.data;
 
@@ -123,13 +123,13 @@ const DataAutoComponent = ({}: DataAutoProps) => {
         }
       }
     });
-  }, [dispatch, getModel, technical_data.mark_name, token]);
+  }, [authUser, dispatch, getModel, technical_data.mark_name]);
 
   useEffect(() => {
-    if (token) {
-      dispatch(getCarMarksRequest({token}));
+    if (authUser?.token) {
+      dispatch(getCarMarksRequest({authUser}));
     }
-  }, [dispatch, token]);
+  }, [authUser, dispatch]);
 
   useEffect(() => {
     if (carMarks && technical_data) {
@@ -153,7 +153,7 @@ const DataAutoComponent = ({}: DataAutoProps) => {
 
   const createNewCar = useCallback(() => {
     const carData = {
-      token,
+      authUser,
       callsign: inputData.gnAuto,
       licence_plate_number: inputData.ctc,
       mark_name: carMarks.name,
@@ -161,13 +161,13 @@ const DataAutoComponent = ({}: DataAutoProps) => {
       year: Number(inputData.year),
       vin: technical_data.vin,
       color_name: colors.name,
-      car_license_front_photo: registerData?.car_license_front_photo,
-      car_license_back_photo: registerData?.car_license_back_photo,
+      car_license_front_photo: authUser?.car_license_front_photo,
+      car_license_back_photo: authUser?.car_license_back_photo,
     };
 
     dispatch(createNewCarRequest(carData)).then((result: any) => {
       if (result.payload.status) {
-        dispatch(authUserInfoRequest({token})).then((res: any) => {
+        dispatch(authUserInfoRequest({authUser})).then((res: any) => {
           if (res.payload.status) {
             navigation.navigate('Home');
           }
@@ -175,7 +175,6 @@ const DataAutoComponent = ({}: DataAutoProps) => {
       }
     });
   }, [
-    token,
     inputData.gnAuto,
     inputData.ctc,
     inputData.year,
@@ -183,8 +182,7 @@ const DataAutoComponent = ({}: DataAutoProps) => {
     carModels.name,
     technical_data.vin,
     colors.name,
-    registerData?.car_license_front_photo,
-    registerData?.car_license_back_photo,
+    authUser,
     dispatch,
     navigation,
   ]);
@@ -257,7 +255,7 @@ const DataAutoComponent = ({}: DataAutoProps) => {
         />
         <AdaptiveButton
           disabled={disableButton}
-          loading={loadingMarks || loadingModels || loadingColors}
+          loading={loadingMarks || loadingModels || loadingColors || loading}
           containerStyle={{
             marginTop: 20,
             ...buttonContainerStyle,

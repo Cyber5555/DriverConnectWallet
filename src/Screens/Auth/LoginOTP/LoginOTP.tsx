@@ -44,7 +44,7 @@ const LoginOTPComponent = () => {
   const dispatch = useDispatch<AppDispatch>();
   const {params} = useRoute<RouteParams>();
   const [inputValue, setInputValue] = useState('');
-  const {loading, error, successCode, token, user} = useSelector(
+  const {loading, error, successCode, token} = useSelector(
     (state: RootState) => state.loginOTPSlice,
   );
 
@@ -98,6 +98,7 @@ const LoginOTPComponent = () => {
       dispatch(clearError());
 
       // if (user.create_account_status === '0') {
+
       navigation.navigate('Register');
 
       // } else if (

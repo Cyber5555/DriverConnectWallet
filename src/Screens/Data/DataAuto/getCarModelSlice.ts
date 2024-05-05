@@ -3,7 +3,7 @@ import {User} from '../../../Context/AuthContext';
 import {Http} from '../../../../http';
 
 interface GetCarModelData {
-  token: User | null;
+  authUser: User | null;
   mark_id: string | number;
 }
 
@@ -27,10 +27,10 @@ export const getCarModelRequest = createAsyncThunk<
   GetCarModelData
 >(
   'getCarModel/getCarModelRequest',
-  async ({token, mark_id}, {rejectWithValue}: any) => {
+  async ({authUser, mark_id}, {rejectWithValue}: any) => {
     const headers = {
       'Content-type': 'application/json',
-      Authorization: `Bearer ${token?.token}`,
+      Authorization: `Bearer ${authUser?.token}`,
     };
 
     try {

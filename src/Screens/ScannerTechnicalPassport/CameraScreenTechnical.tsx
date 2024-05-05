@@ -39,7 +39,7 @@ const CameraTechnicalComponent = () => {
   const insets = useSafeAreaInsets();
   const device = useCameraDevice('back');
   const isFocused = useIsFocused();
-  const {token, addRegisterData} = useAuth();
+  const {authUser, login} = useAuth();
   const cameraRef = useRef<Camera>(null);
   const {hasPermission, requestPermission} = useCameraPermission();
   const {width, height} = useWindowDimensions();
@@ -100,7 +100,7 @@ const CameraTechnicalComponent = () => {
             sendTechnicalPassportRequest({
               image1: imageData.current[0],
               image2: imageData.current[1],
-              token,
+              authUser,
             }),
           ).then(result => {
             if (isSendDriverLicensePayload(result.payload)) {
@@ -111,7 +111,7 @@ const CameraTechnicalComponent = () => {
                     payload.data?.car_license_front_photo,
                   car_license_back_photo: payload.data?.car_license_back_photo,
                 };
-                addRegisterData(userData);
+                login(userData);
 
                 navigation.navigate('DataAuto');
               }
@@ -123,7 +123,7 @@ const CameraTechnicalComponent = () => {
         console.error('Error taking photo:', error);
       }
     }
-  }, [addRegisterData, dispatch, flash, navigation, page, token]);
+  }, [flash, page, dispatch, authUser, login, navigation]);
 
   const format = useCameraFormat(device, [
     {autoFocusSystem: 'contrast-detection'},

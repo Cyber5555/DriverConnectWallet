@@ -5,7 +5,7 @@ import {User} from '../../Context/AuthContext';
 interface SendTechnicalPassportData {
   image1: string;
   image2: string;
-  token: User | null;
+  authUser: User | null;
 }
 
 export interface SendTechnicalPassportPayload {
@@ -28,10 +28,10 @@ export const sendTechnicalPassportRequest = createAsyncThunk<
   SendTechnicalPassportData
 >(
   'sendTechnicalPassport/sendTechnicalPassportRequest',
-  async ({image1, image2, token}, {rejectWithValue}: any) => {
+  async ({image1, image2, authUser}, {rejectWithValue}: any) => {
     const headers = {
       'Content-type': 'multipart/form-data',
-      Authorization: `Bearer ${token?.token}`,
+      Authorization: `Bearer ${authUser?.token}`,
     };
 
     const data = new FormData();
