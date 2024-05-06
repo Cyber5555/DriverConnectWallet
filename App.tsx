@@ -14,22 +14,22 @@ enableScreens();
 
 const App = () => {
   return (
-    <SafeAreaProvider>
-      <GestureHandlerRootView style={{flex: 1}}>
-        <Provider store={store}>
-          <NavigationContainer>
-            <AuthProvider>
+    <Provider store={store}>
+      <AuthProvider>
+        <SafeAreaProvider>
+          <GestureHandlerRootView style={{flex: 1}}>
+            <NavigationContainer>
               <StatusBar
                 translucent={true}
                 backgroundColor={'transparent'}
                 barStyle={'dark-content'}
               />
               <RootNavigation />
-            </AuthProvider>
-          </NavigationContainer>
-        </Provider>
-      </GestureHandlerRootView>
-    </SafeAreaProvider>
+            </NavigationContainer>
+          </GestureHandlerRootView>
+        </SafeAreaProvider>
+      </AuthProvider>
+    </Provider>
   );
 };
 

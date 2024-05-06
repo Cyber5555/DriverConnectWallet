@@ -98,8 +98,9 @@ const LoginOTPComponent = () => {
       dispatch(clearError());
 
       // if (user.create_account_status === '0') {
-
-      navigation.navigate('Register');
+      setTimeout(() => {
+        navigation.navigate('Register');
+      }, 2000);
 
       // } else if (
       //   user.add_car_status === '0' &&

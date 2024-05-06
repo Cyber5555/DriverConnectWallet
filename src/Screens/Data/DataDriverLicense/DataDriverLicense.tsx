@@ -126,12 +126,23 @@ const DataDriverLicenseComponent = () => {
           scanning_person_full_name_last_name,
           scanning_person_full_name_middle_name,
         }),
-      ).then((result: any) => {
-        console.log('📢 [DataDriverLicense.tsx:131]', result.payload);
-        if (result.payload.status) {
-          navigation.navigate('ScannerHomeTechnical');
-        }
-      });
+      )
+        .then((result: any) => {
+          console.log(result.payload);
+
+          if (result.payload.status) {
+            const userData: User = {
+              country_id: region?.id,
+              create_account_status: '1',
+              add_car_status: '0',
+            };
+            login(userData);
+            navigation.navigate('ScannerHomeTechnical');
+          }
+        })
+        .catch(err => {
+          console.log(err);
+        });
     }
   }, [
     disableButton,
@@ -144,6 +155,7 @@ const DataDriverLicenseComponent = () => {
     scanning_person_full_name_first_name,
     scanning_person_full_name_last_name,
     scanning_person_full_name_middle_name,
+    login,
     navigation,
   ]);
 
@@ -193,10 +205,6 @@ const DataDriverLicenseComponent = () => {
           data={driverLicenseCountryData}
           setValue={text => {
             setRegion(text);
-            const userData: User = {
-              country_id: region?.id,
-            };
-            login(userData);
           }}
           value={region || {name: '', id: ''}}
         />

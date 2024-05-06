@@ -109,12 +109,19 @@ const CameraDriverComponent = () => {
                   driver_license_front_photo: imageData.current[0],
                   driver_license_back_photo: imageData.current[1],
                 });
-
+                console.log(
+                  '📢 [CameraScreenDriver.tsx:112]',
+                  imageData.current[0],
+                  imageData.current[1],
+                );
                 navigation.navigate('DataDriverLicense');
+                imageData.current = [];
+              } else {
+                console.log(payload);
+                imageData.current = [];
               }
             }
           });
-          imageData.current = [];
         }
       } catch (error) {
         console.error('Error taking photo:', error);
