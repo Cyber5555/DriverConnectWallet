@@ -12,7 +12,6 @@ import getCarMarksSlice from '../Screens/Data/DataAuto/getCarMarksSlice';
 import getCarModelSlice from '../Screens/Data/DataAuto/getCarModelSlice';
 import carColorSlice from '../Screens/Data/DataAuto/carColorSlice';
 import createNewCarSlice from '../Screens/Data/DataAuto/createNewCarSlice';
-import authUserInfoSlice from '../Screens/Home/authUserInfoSlice';
 
 const rootReducer = combineReducers({
   loginSlice,
@@ -28,7 +27,6 @@ const rootReducer = combineReducers({
   getCarModelSlice,
   carColorSlice,
   createNewCarSlice,
-  authUserInfoSlice,
 });
 
 const store = configureStore({

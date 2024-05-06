@@ -23,7 +23,6 @@ import {useAuth} from '../../../Context/AuthContext';
 import {getCarModelRequest} from './getCarModelSlice';
 import {carColorRequest} from './carColorSlice';
 import {createNewCarRequest} from './createNewCarSlice';
-import {authUserInfoRequest} from '../../Home/authUserInfoSlice';
 
 type DataAutoProps = {};
 
@@ -167,11 +166,7 @@ const DataAutoComponent = ({}: DataAutoProps) => {
 
     dispatch(createNewCarRequest(carData)).then((result: any) => {
       if (result.payload.status) {
-        dispatch(authUserInfoRequest({authUser})).then((res: any) => {
-          if (res.payload.status) {
-            navigation.navigate('Home');
-          }
-        });
+        navigation.navigate('Home');
       }
     });
   }, [

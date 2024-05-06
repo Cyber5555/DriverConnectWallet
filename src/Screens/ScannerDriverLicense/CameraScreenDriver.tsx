@@ -109,9 +109,8 @@ const CameraDriverComponent = () => {
                   driver_license_front_photo: imageData.current[0],
                   driver_license_back_photo: imageData.current[1],
                 });
-                setTimeout(() => {
-                  navigation.navigate('DataDriverLicense');
-                }, 1000);
+
+                navigation.navigate('DataDriverLicense');
               }
             }
           });

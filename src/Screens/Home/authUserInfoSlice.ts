@@ -1,9 +1,8 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {Http} from '../../../http';
-import {User} from '../../Context/AuthContext';
 
 interface AuthUserInfoData {
-  authUser: User | null;
+  token: string | null;
 }
 
 interface AuthUserInfoPayload {
@@ -27,12 +26,12 @@ export const authUserInfoRequest = createAsyncThunk<
   AuthUserInfoData
 >(
   'authUserInfo/authUserInfoRequest',
-  async ({authUser}, {rejectWithValue}: any) => {
+  async ({token}, {rejectWithValue}: any) => {
     const headers = {
       'Content-type': 'application/json',
-      Authorization: `Bearer ${authUser?.token}`,
+      Authorization: `Bearer ${token}`,
     };
-
+    console.log('📢 [authUserInfoSlice.ts:35]', token);
     try {
       const response = await Http.get(
         `${process.env.API_URL}auth_user_info`,

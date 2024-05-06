@@ -23,7 +23,6 @@ import {User, useAuth} from '../../../Context/AuthContext';
 import {driverLicenseCountryRequest} from '../../ScannerDriverLicense/driverLicenseCountrySlice';
 import {createAccountRequest} from './createAccountSlice';
 import moment from 'moment';
-import {authUserInfoRequest} from '../../Home/authUserInfoSlice';
 
 const currentYear = new Date().getFullYear();
 const yearsCount = 70;
@@ -128,12 +127,9 @@ const DataDriverLicenseComponent = () => {
           scanning_person_full_name_middle_name,
         }),
       ).then((result: any) => {
+        console.log('📢 [DataDriverLicense.tsx:131]', result.payload);
         if (result.payload.status) {
-          dispatch(authUserInfoRequest({authUser})).then((res: any) => {
-            if (res.payload.status) {
-              navigation.navigate('ScannerHomeTechnical');
-            }
-          });
+          navigation.navigate('ScannerHomeTechnical');
         }
       });
     }
