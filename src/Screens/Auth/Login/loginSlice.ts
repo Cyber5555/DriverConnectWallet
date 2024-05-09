@@ -16,11 +16,13 @@ export interface LoginPayload {
 
 interface LoginState {
   loading: boolean;
+  code: string;
   error: boolean | undefined;
 }
 
 const initialState: LoginState = {
   loading: false,
+  code: '',
   error: false,
 };
 
@@ -66,13 +68,16 @@ const loginSlice = createSlice({
       .addCase(loginRequest.pending, state => {
         state.loading = true;
         state.error = undefined;
+        state.code = '';
       })
-      .addCase(loginRequest.fulfilled, state => {
+      .addCase(loginRequest.fulfilled, (state, {payload}) => {
         state.loading = false;
+        state.code = payload.code;
       })
       .addCase(loginRequest.rejected, (state, action) => {
         state.loading = false;
         const error = action.payload as RejectWithValue;
+        state.code = '';
         if (error.message) {
           state.error = true;
         }

@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {Dispatch, SetStateAction, memo, useCallback} from 'react';
 import {
   View,
@@ -17,12 +18,14 @@ type CheckLIstProps = {
   jobData: DataType[];
   selectedItem: string;
   setSelectedItem: Dispatch<SetStateAction<string>> | (() => void);
+  error: boolean;
 };
 
 const CheckLIstComponent = ({
   jobData,
   selectedItem,
   setSelectedItem,
+  error,
 }: CheckLIstProps) => {
   const {width} = useWindowDimensions();
   const itemWidth = width / 2 - 25;
@@ -48,6 +51,7 @@ const CheckLIstComponent = ({
               item.id.toString() === selectedItem
                 ? Colors.lightBlue
                 : Colors.gray,
+            borderColor: error ? Colors.red : 'transparent',
           },
         ]}>
         <Text
@@ -99,6 +103,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 8,
+    borderWidth: 1,
   },
   renderItemText: {
     textAlign: 'center',

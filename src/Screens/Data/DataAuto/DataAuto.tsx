@@ -23,12 +23,13 @@ import {useAuth} from '../../../Context/AuthContext';
 import {getCarModelRequest} from './getCarModelSlice';
 import {carColorRequest} from './carColorSlice';
 import {createNewCarRequest} from './createNewCarSlice';
+import {SuccessAuthModal} from '../../../Components/SuccessAuthModal';
 
-type DataAutoProps = {};
-
-const DataAutoComponent = ({}: DataAutoProps) => {
+const DataAutoComponent = () => {
   const insets = useSafeAreaInsets();
+  const {loadUserData} = useAuth();
   const dispatch = useDispatch<AppDispatch>();
+  const [successModal, setSuccessModal] = useState<boolean>(false);
   const {authUser} = useAuth();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootNavigationProps>>();
@@ -53,6 +54,15 @@ const DataAutoComponent = ({}: DataAutoProps) => {
     year: '',
     ctc: '',
     vin: '',
+  });
+  const [errorData, setErrorData] = useState({
+    gnAuto: false,
+    year: false,
+    ctc: false,
+    vin: false,
+    colors: false,
+    carModels: false,
+    carMarks: false,
   });
 
   const handleTextChange = useCallback(
@@ -86,20 +96,21 @@ const DataAutoComponent = ({}: DataAutoProps) => {
                 item?.name.toLowerCase() ===
                 technical_data.model_name.toLowerCase(),
             );
-            setCarModels(modelItem);
-            dispatch(carColorRequest({authUser})).then((resultColor: any) => {
-              if (resultColor.payload.status) {
-                const color = resultColor.payload.data;
-                const colorItem: any = Object.values(color).find(
-                  (item: any) =>
-                    item?.name.toLowerCase() ===
-                    technical_data.color_name.toLowerCase(),
-                );
 
-                setColors(colorItem || {name: 'White', id: ''});
-              }
-            });
+            setCarModels(modelItem !== undefined && modelItem);
           }
+          dispatch(carColorRequest({authUser})).then((resultColor: any) => {
+            if (resultColor.payload.status) {
+              const color = resultColor.payload.data;
+              const colorItem: any = Object.values(color).find(
+                (item: any) =>
+                  item?.name.toLowerCase() ===
+                  technical_data.color_name.toLowerCase(),
+              );
+
+              setColors(colorItem || {name: 'Белый', id: ''});
+            }
+          });
         },
       );
     },
@@ -125,18 +136,6 @@ const DataAutoComponent = ({}: DataAutoProps) => {
   }, [authUser, dispatch, getModel, technical_data.mark_name]);
 
   useEffect(() => {
-    if (authUser?.token) {
-      dispatch(getCarMarksRequest({authUser}));
-    }
-  }, [authUser, dispatch]);
-
-  useEffect(() => {
-    if (carMarks && technical_data) {
-      getModel(carMarks);
-    }
-  }, [carMarks, getModel, technical_data]);
-
-  useEffect(() => {
     const allValuesNotEmpty = Object.values({
       callsign: inputData.gnAuto,
       licence_plate_number: inputData.ctc,
@@ -151,35 +150,47 @@ const DataAutoComponent = ({}: DataAutoProps) => {
   }, [carMarks, carModels, colors, inputData, technical_data]);
 
   const createNewCar = useCallback(() => {
-    const carData = {
-      authUser,
-      callsign: inputData.gnAuto,
-      licence_plate_number: inputData.ctc,
-      mark_name: carMarks.name,
-      model_name: carModels.name,
-      year: Number(inputData.year),
-      vin: technical_data.vin,
-      color_name: colors.name,
-      car_license_front_photo: authUser?.car_license_front_photo,
-      car_license_back_photo: authUser?.car_license_back_photo,
-    };
-
-    dispatch(createNewCarRequest(carData)).then((result: any) => {
-      if (result.payload.status) {
-        navigation.navigate('Home');
-      }
+    setErrorData({
+      carMarks: !carMarks.name,
+      carModels: !carModels.name,
+      colors: !colors.name,
+      ctc: !inputData.ctc,
+      gnAuto: !inputData.gnAuto,
+      vin: !inputData.vin,
+      year: !inputData.year,
     });
+    if (!disableButton) {
+      const carData = {
+        authUser,
+        callsign: inputData.gnAuto,
+        licence_plate_number: inputData.ctc,
+        mark_name: carMarks.name,
+        model_name: carModels?.name,
+        year: Number(inputData.year),
+        vin: technical_data.vin,
+        color_name: colors.name,
+        car_license_front_photo: authUser?.car_license_front_photo,
+        car_license_back_photo: authUser?.car_license_back_photo,
+      };
+
+      dispatch(createNewCarRequest(carData)).then((result: any) => {
+        if (result.payload.status) {
+          setSuccessModal(true);
+        }
+      });
+    }
   }, [
-    inputData.gnAuto,
-    inputData.ctc,
-    inputData.year,
     carMarks.name,
     carModels.name,
-    technical_data.vin,
     colors.name,
+    inputData.ctc,
+    inputData.gnAuto,
+    inputData.vin,
+    inputData.year,
+    disableButton,
     authUser,
+    technical_data.vin,
     dispatch,
-    navigation,
   ]);
 
   const buttonContainerStyle = disableButton
@@ -189,10 +200,14 @@ const DataAutoComponent = ({}: DataAutoProps) => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={[
-        styles.container,
-        {paddingTop: Platform.OS === 'ios' ? insets.top : 20},
-      ]}>
+      style={[styles.container, {paddingTop: insets.top}]}>
+      <SuccessAuthModal
+        visible={successModal}
+        onPress={() => {
+          setSuccessModal(false);
+          loadUserData();
+        }}
+      />
       <ScrollView
         style={styles.scrollView}
         needsOffscreenAlphaCompositing={false}
@@ -208,48 +223,80 @@ const DataAutoComponent = ({}: DataAutoProps) => {
           Регистрация в агрегаторе: Данные авто
         </Text>
         <DefaultInput
-          onChangeText={text => handleTextChange(text, 'gnAuto')}
+          onChangeText={text => {
+            handleTextChange(text, 'gnAuto');
+            setErrorData({...errorData, gnAuto: false});
+          }}
           placeholder={'ГН авто'}
           value={inputData?.gnAuto}
+          label={'Гос.номер'}
+          error={errorData.gnAuto}
         />
         <AccordionInput
           label={'Марка'}
           placeholder={'Не указан'}
           data={car_marks}
           value={carMarks}
-          setValue={text => setCarMarks(text)}
+          setValue={text => {
+            setCarMarks(text);
+            getModel(text);
+            setErrorData({...errorData, carMarks: false});
+          }}
+          error={errorData.carMarks}
         />
         <AccordionInput
           label={'Модель'}
           placeholder={'Не указан'}
           data={car_model}
           value={carModels}
-          setValue={text => setCarModels(text)}
+          setValue={text => {
+            setCarModels(text);
+            setErrorData({...errorData, carModels: false});
+          }}
+          error={errorData.carModels}
         />
         <DefaultInput
-          onChangeText={text => handleTextChange(text, 'year')}
+          onChangeText={text => {
+            handleTextChange(text, 'year');
+            setErrorData({...errorData, year: false});
+          }}
           placeholder={'Год выпуска'}
           value={inputData?.year}
+          label={'Год'}
+          error={errorData.year}
         />
         <AccordionInput
           label={'Цвет'}
           placeholder={'Не указан'}
           data={car_color}
           value={colors}
-          setValue={text => setColors(text)}
+          setValue={text => {
+            setColors(text);
+            setErrorData({...errorData, colors: false});
+          }}
+          error={errorData.colors}
         />
         <DefaultInput
-          onChangeText={text => handleTextChange(text, 'ctc')}
+          onChangeText={text => {
+            handleTextChange(text, 'ctc');
+            setErrorData({...errorData, ctc: false});
+          }}
           placeholder={'Номер СТС'}
           value={inputData?.ctc}
+          label={'Номер док.'}
+          error={errorData.ctc}
         />
         <DefaultInput
-          onChangeText={text => handleTextChange(text, 'vin')}
+          onChangeText={text => {
+            handleTextChange(text, 'vin');
+            setErrorData({...errorData, vin: false});
+          }}
           placeholder={'Номер VIN'}
           value={inputData?.vin}
+          label={'VIN'}
+          error={errorData.vin}
         />
         <AdaptiveButton
-          disabled={disableButton}
           loading={loadingMarks || loadingModels || loadingColors || loading}
           containerStyle={{
             marginTop: 20,

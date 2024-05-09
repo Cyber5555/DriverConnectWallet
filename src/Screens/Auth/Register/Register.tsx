@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {memo, useCallback, useEffect, useState} from 'react';
-import {View, Text, StyleSheet, Platform, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, ScrollView} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {DefaultInput} from '../../../Components/DefaultInput';
 import {DateInput} from '../../../Components/DateInput';
@@ -23,7 +23,7 @@ import {SuccessAuthModal} from '../../../Components/SuccessAuthModal';
 const RegisterComponent = () => {
   const dispatch = useDispatch<AppDispatch>();
   const insets = useSafeAreaInsets();
-  const {authUser, login} = useAuth();
+  const {authUser, login, loadUserData} = useAuth();
   const {jobData} = useSelector(
     (state: RootState) => state.getJobCategorySlice,
   );
@@ -40,6 +40,14 @@ const RegisterComponent = () => {
     name: '',
     surName: '',
     fatherName: '',
+  });
+  const [errorData, setErrorData] = useState({
+    name: false,
+    surName: false,
+    fatherName: false,
+    job_category_id: false,
+    region_id: false,
+    birth_date: false,
   });
 
   const handleTextChange = (text: string | {}, fieldName: string) => {
@@ -80,11 +88,28 @@ const RegisterComponent = () => {
       person_full_name_last_name: inputData.surName,
       person_full_name_middle_name: inputData.fatherName,
     };
+    const allValuesNotEmpty = Object.values(userData).every(
+      item => item !== undefined && item !== null && item !== '',
+    );
+
     login(userData);
 
     const formattedBirthDate = date
       ? moment(date, 'YYYY-MM-DD').format('YYYY-MM-DD')
       : null;
+
+    if (!allValuesNotEmpty) {
+      const newErrorData = {
+        name: !userData.person_full_name_first_name,
+        surName: !userData.person_full_name_last_name,
+        fatherName: !userData.person_full_name_middle_name,
+        job_category_id: !userData.job_category_id,
+        region_id: !userData.region_id,
+        birth_date: !userData.birth_date,
+      };
+      setErrorData(newErrorData);
+    }
+
     if (selectedItem === '3') {
       dispatch(
         createAccountRequest({
@@ -102,9 +127,9 @@ const RegisterComponent = () => {
         }
       });
     } else {
-      setTimeout(() => {
+      if (allValuesNotEmpty) {
         navigation.navigate('ScannerHomeDriver');
-      }, 1000);
+      }
     }
   }, [
     date,
@@ -120,11 +145,7 @@ const RegisterComponent = () => {
   ]);
 
   return (
-    <View
-      style={[
-        styles.container,
-        {paddingTop: Platform.OS === 'ios' ? insets.top : 20},
-      ]}>
+    <View style={[styles.container, {paddingTop: insets.top}]}>
       {/* <AntDesign
         name={'arrowleft'}
         color={Colors.black}
@@ -136,7 +157,7 @@ const RegisterComponent = () => {
         visible={successModal}
         onPress={() => {
           setSuccessModal(false);
-          navigation.navigate('Home');
+          loadUserData();
         }}
       />
       <Text style={styles.pageTitle}>
@@ -149,42 +170,71 @@ const RegisterComponent = () => {
         showsVerticalScrollIndicator={false}>
         <View style={styles.inputContainer}>
           <DefaultInput
-            onChangeText={text => handleTextChange(text, 'name')}
+            label={'Имя'}
+            onChangeText={text => {
+              handleTextChange(text, 'name');
+              setErrorData({...errorData, ...{name: false}});
+            }}
             placeholder={'Имя'}
             value={inputData.name}
+            error={errorData.name}
           />
           <DefaultInput
-            onChangeText={text => handleTextChange(text, 'surName')}
+            label={'Фамилия'}
+            onChangeText={text => {
+              handleTextChange(text, 'surName');
+              setErrorData({...errorData, ...{surName: false}});
+            }}
             placeholder={'Фамилия'}
             value={inputData.surName}
+            error={errorData.surName}
           />
           <DefaultInput
-            onChangeText={text => handleTextChange(text, 'fatherName')}
+            label={'Отчество'}
+            onChangeText={text => {
+              handleTextChange(text, 'fatherName');
+              setErrorData({...errorData, ...{fatherName: false}});
+            }}
             placeholder={'Отчество'}
             value={inputData.fatherName}
+            error={errorData.fatherName}
           />
           <DateInput
-            placeholder={'19.02.1999'}
+            placeholder={'dd.mm.yyyy'}
             label={'Дата рождения'}
             date={date}
-            setDate={setDate}
+            setDate={val => {
+              setDate(val);
+              setErrorData({...errorData, ...{birth_date: false}});
+            }}
+            error={errorData.birth_date}
+            maximumDate={new Date(Date.now() - 18 * 365 * 24 * 60 * 60 * 1000)}
+            minimumDate={new Date(Date.now() - 80 * 365 * 24 * 60 * 60 * 1000)}
           />
           <AccordionInput
             label={'Регион'}
             placeholder={'Не указан'}
             data={regionData}
-            setValue={text => setRegion(text)}
+            setValue={text => {
+              setRegion(text);
+              setErrorData({...errorData, ...{region_id: false}});
+            }}
             value={region || {name: '', id: ''}}
+            error={errorData.region_id}
           />
           <CheckList
             jobData={jobData}
             selectedItem={selectedItem}
-            setSelectedItem={setSelectedItem}
+            setSelectedItem={val => {
+              setSelectedItem(val);
+              setErrorData({...errorData, ...{job_category_id: false}});
+            }}
+            error={errorData.job_category_id}
           />
           <AdaptiveButton
             onPress={onSaveData}
             loading={loading}
-            disabled={disableButton || loading}
+            disabled={loading}
             containerStyle={{
               backgroundColor: disableButton ? '#319240aa' : Colors.green,
             }}>

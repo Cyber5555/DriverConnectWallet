@@ -1,5 +1,11 @@
 import React, {Dispatch, SetStateAction, memo, useState} from 'react';
-import {View, Text, StyleSheet, ViewStyle} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ViewStyle,
+  TouchableOpacity,
+} from 'react-native';
 import Colors from '../Includes/Colors';
 import MaskInput from 'react-native-mask-input';
 import Fontisto from 'react-native-vector-icons/Fontisto';
@@ -10,8 +16,11 @@ type DateInputProps = {
   label: string;
   containerStyle?: ViewStyle;
   placeholder: string;
-  date: string | Date | undefined; // Updated type definition
-  setDate: Dispatch<SetStateAction<Date | undefined>>; // Updated type definition
+  date: string | Date | undefined;
+  setDate: Dispatch<SetStateAction<Date | undefined>>;
+  maximumDate: Date | undefined;
+  minimumDate: Date | undefined;
+  error: boolean;
 };
 
 const DateInputComponent = ({
@@ -20,6 +29,9 @@ const DateInputComponent = ({
   placeholder,
   date,
   setDate,
+  maximumDate,
+  minimumDate,
+  error,
 }: DateInputProps) => {
   const [open, setOpen] = useState<boolean>(false);
 
@@ -31,34 +43,43 @@ const DateInputComponent = ({
   };
 
   return (
-    <View style={{...styles.container, ...containerStyle}}>
+    <View>
       <Text style={styles.label}>{label}</Text>
-      <MaskInput
-        value={date ? moment(date).format('DD.MM.YYYY') : ''}
-        style={styles.input}
-        placeholder={placeholder}
-        placeholderTextColor={Colors.dark}
-        keyboardType={'phone-pad'}
-        editable={false}
-        mask={[/\d/, /\d/, '.', /\d/, /\d/, '.', /\d/, /\d/, /\d/, /\d/]}
-      />
-      <Fontisto
-        name={'date'}
-        size={24}
-        style={styles.dateIcon}
-        color={Colors.black}
-        onPress={() => setOpen(true)}
-      />
-      <DatePicker
-        modal
-        mode={'date'}
-        open={open}
-        date={date ? new Date(date) : new Date()} // Convert to Date object if not already
-        onConfirm={handleDateChange}
-        onCancel={() => setOpen(false)}
-        maximumDate={new Date(Date.now() - 18 * 365 * 24 * 60 * 60 * 1000)}
-        minimumDate={new Date(Date.now() - 80 * 365 * 24 * 60 * 60 * 1000)}
-      />
+      <TouchableOpacity
+        style={{
+          ...styles.container,
+          ...containerStyle,
+          ...{
+            borderColor: error ? Colors.red : 'transparent',
+          },
+        }}
+        onPress={() => setOpen(true)}>
+        <MaskInput
+          value={date ? moment(date).format('DD.MM.YYYY') : ''}
+          style={styles.input}
+          placeholder={placeholder}
+          placeholderTextColor={Colors.darkGray}
+          keyboardType={'phone-pad'}
+          editable={false}
+          mask={[/\d/, /\d/, '.', /\d/, /\d/, '.', /\d/, /\d/, /\d/, /\d/]}
+        />
+        <Fontisto
+          name={'date'}
+          size={24}
+          style={styles.dateIcon}
+          color={Colors.black}
+        />
+        <DatePicker
+          modal
+          mode={'date'}
+          open={open}
+          date={date ? new Date(date) : new Date(Date.now())}
+          onConfirm={handleDateChange}
+          onCancel={() => setOpen(false)}
+          maximumDate={maximumDate}
+          minimumDate={minimumDate}
+        />
+      </TouchableOpacity>
     </View>
   );
 };
@@ -66,9 +87,11 @@ const DateInputComponent = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: 80,
+    height: 55,
     position: 'relative',
     marginBottom: 10,
+    borderWidth: 1,
+    borderRadius: 8,
   },
   label: {
     marginBottom: 5,
@@ -82,6 +105,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     fontSize: 20,
     color: Colors.dark,
+    pointerEvents: 'none',
   },
   dateIcon: {
     position: 'absolute',

@@ -61,7 +61,7 @@ const LoginComponent = () => {
       dispatch(loginRequest({phone: unmaskedPhone})).then(result => {
         const {code, status} = result.payload as LoginPayload;
         if (status) {
-          if (code && unmaskedPhone.length === 10) {
+          if (unmaskedPhone.length === 10) {
             navigation.navigate('LoginOTP', {
               code,
               unmaskedPhone,

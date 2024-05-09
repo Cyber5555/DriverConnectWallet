@@ -20,6 +20,7 @@ type AccordionInputProps = {
   data: DataType[];
   value: DataType;
   setValue: (data: DataType) => void;
+  error: boolean;
 };
 
 const RenderItem = ({
@@ -43,6 +44,7 @@ const AccordionInputComponent = ({
   data,
   value,
   setValue,
+  error,
 }: AccordionInputProps) => {
   const flatListHeight = useSharedValue(0);
   const flatListMargin = useSharedValue(0);
@@ -81,8 +83,21 @@ const AccordionInputComponent = ({
   return (
     <View style={styles.container}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <TouchableOpacity style={styles.touchableOpacity} onPress={toggleHeight}>
-        <Text style={styles.input}>
+      <TouchableOpacity
+        style={{
+          ...styles.touchableOpacity,
+          ...{
+            borderColor: error ? Colors.red : 'transparent',
+          },
+        }}
+        onPress={toggleHeight}>
+        <Text
+          style={{
+            ...styles.input,
+            ...{
+              color: value.name ? Colors.dark : Colors.darkGray,
+            },
+          }}>
           {value.name ? value.name : placeholder}
         </Text>
         <AnimatedFontAwesome
@@ -127,6 +142,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     backgroundColor: Colors.gray,
     borderRadius: 8,
+    borderWidth: 1,
   },
   input: {
     paddingHorizontal: 10,

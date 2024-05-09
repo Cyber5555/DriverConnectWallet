@@ -40,7 +40,7 @@ const LoginInputComponent = ({
           setUnmaskedPhone(unmasked);
         }}
         placeholder={placeholder}
-        placeholderTextColor={Colors.dark}
+        placeholderTextColor={Colors.darkGray}
         keyboardType={'phone-pad'}
         mask={[
           '+',

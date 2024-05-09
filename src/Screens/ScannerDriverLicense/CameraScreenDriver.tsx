@@ -6,11 +6,12 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   Platform,
-  ActivityIndicator,
   Modal,
+  Alert,
 } from 'react-native';
 import {
   Camera,
+  CameraRuntimeError,
   useCameraDevice,
   useCameraFormat,
   useCameraPermission,
@@ -18,6 +19,7 @@ import {
 import Colors from '../../Includes/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootNavigationProps} from '../../Router/RootNavigation';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -30,12 +32,23 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
 import {useAuth} from '../../Context/AuthContext';
+import LoaderKit from 'react-native-loader-kit';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 
 type FlashType = 'auto' | 'off' | 'on' | undefined;
 type PageType = 'first' | 'second';
 
 const CameraDriverComponent = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const cardRotateAnimation = useSharedValue('0deg');
+  const cardRotateZAnimation = useSharedValue('90deg');
+  const cardScaleAnimation = useSharedValue(0);
+  const [noCamera, setNoCamera] = useState(false);
   const insets = useSafeAreaInsets();
   const device = useCameraDevice('back');
   const isFocused = useIsFocused();
@@ -63,24 +76,39 @@ const CameraDriverComponent = () => {
     setFlash(prevFlash => (prevFlash === 'on' ? 'off' : 'on'));
   }, []);
 
+  const onError = useCallback((error: CameraRuntimeError) => {
+    console.error(error);
+    Alert.alert('error');
+  }, []);
+
   const takePhoto = useCallback(async () => {
+    setNoCamera(true);
     if (cameraRef.current) {
       try {
-        const data = await cameraRef.current.takePhoto({
+        const data = await cameraRef?.current?.takePhoto({
           flash: flash,
-          enableAutoDistortionCorrection: true,
           enableAutoRedEyeReduction: true,
           enableShutterSound: true,
         });
+
         let imagePath =
           Platform.OS === 'ios' ? data?.path : 'file://' + data.path;
 
         if (imagePath !== '' && page === 'first') {
           imageData.current = [...imageData.current, imagePath];
+          cardScaleAnimation.value = 1;
+          setTimeout(() => {
+            cardRotateAnimation.value = '180deg';
+          }, 1000);
+          setTimeout(() => {
+            cardScaleAnimation.value = 0;
+            setNoCamera(false);
+          }, 2000);
           setPage('second');
         } else if (imagePath && page === 'second') {
           imageData.current = [...imageData.current, imagePath];
           setPage('first');
+          setNoCamera(true);
         }
 
         function isSendDriverLicensePayload(
@@ -109,15 +137,10 @@ const CameraDriverComponent = () => {
                   driver_license_front_photo: imageData.current[0],
                   driver_license_back_photo: imageData.current[1],
                 });
-                console.log(
-                  '📢 [CameraScreenDriver.tsx:112]',
-                  imageData.current[0],
-                  imageData.current[1],
-                );
+                setNoCamera(false);
                 navigation.navigate('DataDriverLicense');
                 imageData.current = [];
               } else {
-                console.log(payload);
                 imageData.current = [];
               }
             }
@@ -127,18 +150,53 @@ const CameraDriverComponent = () => {
         console.error('Error taking photo:', error);
       }
     }
-  }, [flash, page, dispatch, authUser, login, navigation]);
+  }, [
+    flash,
+    page,
+    cardScaleAnimation,
+    cardRotateAnimation,
+    dispatch,
+    authUser,
+    login,
+    navigation,
+  ]);
 
   const format = useCameraFormat(device, [
     {autoFocusSystem: 'contrast-detection'},
     {iso: 'max'},
   ]);
 
+  const rotateStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          perspective: 2000,
+        },
+        {
+          rotateX: withTiming(cardRotateAnimation.value),
+        },
+        {
+          rotateZ: cardRotateZAnimation.value,
+        },
+        {
+          scale: withSpring(cardScaleAnimation.value, {
+            damping: 15,
+            stiffness: 100,
+          }),
+        },
+      ],
+    };
+  });
+
   return (
     <View style={styles.container}>
       <Modal visible={loading} transparent={true}>
         <View style={styles.loading}>
-          <ActivityIndicator color={Colors.black} size={'large'} />
+          <LoaderKit
+            style={styles.load}
+            name={'BallSpinFadeLoader'}
+            color={Colors.black}
+          />
         </View>
       </Modal>
       <AntDesign
@@ -159,7 +217,7 @@ const CameraDriverComponent = () => {
         <Text style={styles.cameraText}>
           {page === 'first'
             ? 'Водительское удостоверение: лицевая сторона'
-            : 'водительское удостоверение задняя сторона'}
+            : 'Водительское удостоверение задняя сторона'}
         </Text>
       </View>
       {device && hasPermission && (
@@ -182,8 +240,8 @@ const CameraDriverComponent = () => {
             focusable={true}
             isActive={isFocused}
             format={format}
-            // frameProcessor={frameProcessor}
             pixelFormat={'yuv'}
+            onError={onError}
           />
         </View>
       )}
@@ -218,8 +276,13 @@ const CameraDriverComponent = () => {
           stroke={Colors.white}
         />
       </Svg>
+
+      <Animated.View style={[styles.animatedCard, rotateStyle]}>
+        <FontAwesome name={'drivers-license'} color={Colors.white} size={200} />
+      </Animated.View>
       {device && (
         <TouchableOpacity
+          disabled={noCamera}
           onPress={takePhoto}
           activeOpacity={0.6}
           style={[styles.cameraButton, {bottom: insets.bottom + 10}]}>
@@ -265,7 +328,7 @@ const styles = StyleSheet.create({
   goBack: {
     position: 'absolute',
     right: 20,
-    zIndex: 1,
+    zIndex: 2,
     transform: [{rotateZ: '90deg'}],
   },
   cameraTextParent: {
@@ -313,6 +376,16 @@ const styles = StyleSheet.create({
   },
   svg: {
     position: 'absolute',
+  },
+  load: {
+    width: 100,
+    height: 100,
+  },
+  animatedCard: {
+    zIndex: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backfaceVisibility: 'visible',
   },
 });
 

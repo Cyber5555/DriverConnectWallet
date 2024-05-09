@@ -47,6 +47,13 @@ const DataDriverLicenseComponent = () => {
   const [year, setYear] = useState<DataType>({name: '', id: ''});
   const [licenseNumber, setLicenseNumber] = useState<string | any>('');
   const [disableButton, setDisableButton] = useState<boolean>(true);
+  const [errorData, setErrorData] = useState({
+    dateFirst: false,
+    dateSecond: false,
+    region: false,
+    year: false,
+    licenseNumber: false,
+  });
 
   const {
     driver_license_issue_date,
@@ -64,13 +71,13 @@ const DataDriverLicenseComponent = () => {
 
   useEffect(() => {
     // Convert date strings to Date objects
-    setDateFirst(
+    setDateSecond(
       typeof driver_license_expiry_date === 'string'
         ? moment(driver_license_expiry_date, 'YYYY-MM-DD').toDate()
         : driver_license_expiry_date,
     );
 
-    setDateSecond(
+    setDateFirst(
       typeof driver_license_issue_date === 'string'
         ? moment(driver_license_issue_date, 'YYYY-MM-DD').toDate()
         : driver_license_issue_date,
@@ -88,7 +95,7 @@ const DataDriverLicenseComponent = () => {
       dateFirst,
       dateSecond,
       region,
-      year,
+      year: year.name,
       licenseNumber,
     };
     const allValuesNotEmpty = Object.values(distractValues).every(
@@ -103,11 +110,19 @@ const DataDriverLicenseComponent = () => {
   }, [dateFirst, dateSecond, region, year, licenseNumber]);
 
   const sendData = useCallback(() => {
-    if (!disableButton) {
-      const formattedBirthDate = authUser?.birth_date
-        ? moment(authUser.birth_date, 'YYYY-MM-DD').format('YYYY-MM-DD')
-        : null;
+    const formattedBirthDate = authUser?.birth_date
+      ? moment(authUser.birth_date, 'YYYY-MM-DD').format('YYYY-MM-DD')
+      : null;
 
+    setErrorData({
+      dateFirst: !dateFirst,
+      dateSecond: !dateSecond,
+      region: !region?.name,
+      year: year.name === '',
+      licenseNumber: licenseNumber === '',
+    });
+
+    if (!disableButton) {
       dispatch(
         createAccountRequest({
           authUser,
@@ -128,8 +143,6 @@ const DataDriverLicenseComponent = () => {
         }),
       )
         .then((result: any) => {
-          console.log(result.payload);
-
           if (result.payload.status) {
             const userData: User = {
               country_id: region?.id,
@@ -141,17 +154,19 @@ const DataDriverLicenseComponent = () => {
           }
         })
         .catch(err => {
-          console.log(err);
+          console.error(err);
         });
     }
   }, [
-    disableButton,
     authUser,
-    dispatch,
+    dateFirst,
+    dateSecond,
+    region?.name,
     region?.id,
     year.name,
-    dateFirst,
     licenseNumber,
+    disableButton,
+    dispatch,
     scanning_person_full_name_first_name,
     scanning_person_full_name_last_name,
     scanning_person_full_name_middle_name,
@@ -162,10 +177,7 @@ const DataDriverLicenseComponent = () => {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={[
-        styles.container,
-        {paddingTop: Platform.OS === 'ios' ? insets.top : 20},
-      ]}>
+      style={[styles.container, {paddingTop: insets.top}]}>
       <ScrollView
         style={styles.scrollView}
         needsOffscreenAlphaCompositing={false}
@@ -181,22 +193,39 @@ const DataDriverLicenseComponent = () => {
           Регистрация в агрегаторе: Данные водительского удостоверения
         </Text>
         <DefaultInput
-          onChangeText={text => setLicenseNumber(text)}
+          onChangeText={text => {
+            setLicenseNumber(text);
+            setErrorData({...errorData, licenseNumber: false});
+          }}
           placeholder={'6636747474774'}
           value={licenseNumber}
           keyboardType={'number-pad'}
+          label={'Номер Докемента'}
+          error={errorData.licenseNumber}
         />
         <DateInput
           label={'Дата выдачи ВУ'}
           placeholder={'19.03.2015'}
           date={dateFirst}
-          setDate={setDateFirst}
+          error={errorData.dateFirst}
+          setDate={val => {
+            setDateFirst(val);
+            setErrorData({...errorData, dateFirst: false});
+          }}
+          maximumDate={new Date(Date.now())}
+          minimumDate={new Date(Date.now() - 15 * 365 * 24 * 60 * 60 * 1000)}
         />
         <DateInput
           label={'ВУ действительны до'}
           placeholder={'19.03.2025'}
           date={dateSecond}
-          setDate={setDateSecond}
+          error={errorData.dateSecond}
+          setDate={val => {
+            setDateSecond(val);
+            setErrorData({...errorData, dateSecond: false});
+          }}
+          minimumDate={new Date(Date.now())}
+          maximumDate={new Date(Date.now() + 15 * 365 * 24 * 60 * 60 * 1000)}
         />
 
         <AccordionInput
@@ -205,19 +234,24 @@ const DataDriverLicenseComponent = () => {
           data={driverLicenseCountryData}
           setValue={text => {
             setRegion(text);
+            setErrorData({...errorData, region: false});
           }}
           value={region || {name: '', id: ''}}
+          error={errorData.region}
         />
         <AccordionInput
           placeholder={'2024'}
           data={dataYear}
-          setValue={text => setYear(text)}
+          setValue={text => {
+            setYear(text);
+            setErrorData({...errorData, year: false});
+          }}
           value={year || {name: '', id: ''}}
           label={'Стаж с'}
+          error={errorData.year}
         />
 
         <AdaptiveButton
-          disabled={disableButton}
           loading={loading}
           containerStyle={{
             marginVertical: 20,

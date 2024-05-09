@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   Platform,
-  ActivityIndicator,
   Modal,
 } from 'react-native';
 import {
@@ -18,6 +17,7 @@ import {
 import Colors from '../../Includes/Colors';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootNavigationProps} from '../../Router/RootNavigation';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -30,6 +30,13 @@ import {
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
 import {User, useAuth} from '../../Context/AuthContext';
+import LoaderKit from 'react-native-loader-kit';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 
 type FlashType = 'auto' | 'off' | 'on' | undefined;
 type PageType = 'first' | 'second';
@@ -39,6 +46,9 @@ const CameraTechnicalComponent = () => {
   const insets = useSafeAreaInsets();
   const device = useCameraDevice('back');
   const isFocused = useIsFocused();
+  const cardRotateAnimation = useSharedValue('0deg');
+  const cardScaleAnimation = useSharedValue(0);
+  const [noCamera, setNoCamera] = useState(false);
   const {authUser, login} = useAuth();
   const cameraRef = useRef<Camera>(null);
   const {hasPermission, requestPermission} = useCameraPermission();
@@ -65,11 +75,11 @@ const CameraTechnicalComponent = () => {
 
   // let imageData: string[] = [];
   const takePhoto = useCallback(async () => {
+    setNoCamera(true);
     if (cameraRef.current) {
       try {
         const data = await cameraRef.current.takePhoto({
           flash: flash,
-          enableAutoDistortionCorrection: true,
           enableAutoRedEyeReduction: true,
           enableShutterSound: true,
         });
@@ -79,9 +89,18 @@ const CameraTechnicalComponent = () => {
         if (imagePath !== '' && page === 'first') {
           imageData.current = [...imageData.current, imagePath];
           setPage('second');
+          cardScaleAnimation.value = 1;
+          setTimeout(() => {
+            cardRotateAnimation.value = '-180deg';
+          }, 1000);
+          setTimeout(() => {
+            cardScaleAnimation.value = 0;
+            setNoCamera(false);
+          }, 2000);
         } else if (imagePath && page === 'second') {
           imageData.current = [...imageData.current, imagePath];
           setPage('first');
+          setNoCamera(true);
         }
 
         function isSendDriverLicensePayload(
@@ -112,6 +131,7 @@ const CameraTechnicalComponent = () => {
                   car_license_back_photo: payload.data?.car_license_back_photo,
                 };
                 login(userData);
+                setNoCamera(false);
 
                 navigation.navigate('DataAuto');
               }
@@ -123,18 +143,50 @@ const CameraTechnicalComponent = () => {
         console.error('Error taking photo:', error);
       }
     }
-  }, [flash, page, dispatch, authUser, login, navigation]);
+  }, [
+    flash,
+    page,
+    cardScaleAnimation,
+    cardRotateAnimation,
+    dispatch,
+    authUser,
+    login,
+    navigation,
+  ]);
 
   const format = useCameraFormat(device, [
     {autoFocusSystem: 'contrast-detection'},
     {iso: 'max'},
   ]);
 
+  const rotateStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          perspective: 1500,
+        },
+        {
+          rotateY: withTiming(cardRotateAnimation.value),
+        },
+        {
+          scale: withSpring(cardScaleAnimation.value, {
+            damping: 15,
+            stiffness: 100,
+          }),
+        },
+      ],
+    };
+  });
+
   return (
     <View style={styles.container}>
       <Modal visible={loading} transparent={true}>
         <View style={styles.loading}>
-          <ActivityIndicator color={Colors.black} size={'large'} />
+          <LoaderKit
+            style={styles.load}
+            name={'BallSpinFadeLoader'}
+            color={Colors.black}
+          />
         </View>
       </Modal>
       <AntDesign
@@ -152,7 +204,7 @@ const CameraTechnicalComponent = () => {
           },
         ]}>
         <Text style={styles.cameraText}>
-          {page === 'first' ? 'СТС передняя часть' : 'СТС Задняя часть'}
+          {page === 'first' ? 'СТС Передняя часть' : 'СТС Задняя часть'}
         </Text>
       </View>
       {device && hasPermission && (
@@ -211,8 +263,12 @@ const CameraTechnicalComponent = () => {
           stroke={Colors.white}
         />
       </Svg>
+      <Animated.View style={[styles.animatedCard, rotateStyle]}>
+        <FontAwesome name={'drivers-license'} color={Colors.white} size={200} />
+      </Animated.View>
       {device && (
         <TouchableOpacity
+          disabled={noCamera}
           onPress={takePhoto}
           activeOpacity={0.6}
           style={[styles.cameraButton, {bottom: insets.bottom + 10}]}>
@@ -299,6 +355,16 @@ const styles = StyleSheet.create({
   },
   svg: {
     position: 'absolute',
+  },
+  load: {
+    width: 100,
+    height: 100,
+  },
+  animatedCard: {
+    zIndex: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backfaceVisibility: 'visible',
   },
 });
 

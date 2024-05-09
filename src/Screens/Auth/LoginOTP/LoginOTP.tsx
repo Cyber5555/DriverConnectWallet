@@ -29,6 +29,7 @@ import {AppDispatch, RootState} from '../../../store/store';
 import {User, useAuth} from '../../../Context/AuthContext';
 import {useIsFocused} from '@react-navigation/native';
 import {CountdownTimer} from '../../../Components/CountdownTimer';
+import {loginRequest} from '../Login/loginSlice';
 
 type RouteParams = {
   key: string;
@@ -44,6 +45,7 @@ const LoginOTPComponent = () => {
   const dispatch = useDispatch<AppDispatch>();
   const {params} = useRoute<RouteParams>();
   const [inputValue, setInputValue] = useState('');
+  const {code} = useSelector((state: RootState) => state.loginSlice);
   const {loading, error, successCode, token} = useSelector(
     (state: RootState) => state.loginOTPSlice,
   );
@@ -60,7 +62,7 @@ const LoginOTPComponent = () => {
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
       () => {
-        scrollViewRef.current?.scrollTo({y: 160, animated: true});
+        scrollViewRef.current?.scrollTo({y: 100, animated: true});
       },
     );
 
@@ -71,18 +73,18 @@ const LoginOTPComponent = () => {
 
   useEffect(() => {
     if (isFocusedPage) {
-      if (params.code !== null) {
-        Alert.alert('Your Code', `Code: ${params.code}`, [
+      if (code !== '' && code !== undefined) {
+        Alert.alert('Your Code', `Code: ${code}`, [
           {
-            text: 'OK',
+            text: 'ДАЛЕЕ',
           },
         ]);
       }
     }
-  }, [params]);
+  }, [params, code]);
 
   const sendCode = useCallback(() => {
-    if (params) {
+    if (params.unmaskedPhone && code !== '') {
       dispatch(
         loginOTPRequest({phone: params.unmaskedPhone, code: inputValue}),
       );
@@ -98,9 +100,8 @@ const LoginOTPComponent = () => {
       dispatch(clearError());
 
       // if (user.create_account_status === '0') {
-      setTimeout(() => {
-        navigation.navigate('Register');
-      }, 2000);
+
+      navigation.navigate('Register');
 
       // } else if (
       //   user.add_car_status === '0' &&
@@ -112,8 +113,9 @@ const LoginOTPComponent = () => {
   }, [error.message, successCode, token]);
 
   const handleResendOTP = () => {
-    // Logic to resend OTP
-    console.log('Resending OTP...');
+    if (params.unmaskedPhone.length === 10) {
+      dispatch(loginRequest({phone: params.unmaskedPhone}));
+    }
   };
 
   return (

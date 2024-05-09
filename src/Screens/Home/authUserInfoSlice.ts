@@ -8,17 +8,23 @@ interface AuthUserInfoData {
 interface AuthUserInfoPayload {
   status: boolean;
   user: [];
+  car: [];
   message: string;
+  balance: number;
 }
 
 interface AuthUserInfoState {
   auth_user_info: any;
   loading: boolean;
+  auth_user_car_info: any;
+  balance: number;
 }
 
 const initialState: AuthUserInfoState = {
   auth_user_info: null,
+  auth_user_car_info: null,
   loading: false,
+  balance: 0,
 };
 
 export const authUserInfoRequest = createAsyncThunk<
@@ -53,9 +59,11 @@ const authUserInfoSlice = createSlice({
       .addCase(authUserInfoRequest.pending, state => {
         state.loading = true;
       })
-      .addCase(authUserInfoRequest.fulfilled, (state, action) => {
-        const {user} = action.payload;
+      .addCase(authUserInfoRequest.fulfilled, (state, {payload}) => {
+        const {user, car, balance} = payload;
         state.auth_user_info = user;
+        state.auth_user_car_info = car;
+        state.balance = balance;
         state.loading = false;
       })
       .addCase(authUserInfoRequest.rejected, state => {

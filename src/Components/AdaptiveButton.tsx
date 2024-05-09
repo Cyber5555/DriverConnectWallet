@@ -5,9 +5,9 @@ import {
   TouchableOpacity,
   ViewStyle,
   TextStyle,
-  ActivityIndicator,
 } from 'react-native';
 import Colors from '../Includes/Colors';
+import LoaderKit from 'react-native-loader-kit';
 
 type AdaptiveButtonProps = {
   children: string;
@@ -36,7 +36,11 @@ const AdaptiveButtonComponent = ({
       }}
       onPress={onPress}>
       {loading ? (
-        <ActivityIndicator color={Colors.white} size={'small'} />
+        <LoaderKit
+          style={styles.load}
+          name={'BallSpinFadeLoader'}
+          color={Colors.white}
+        />
       ) : (
         <Text style={{...styles.text, ...textStyle}}>{children}</Text>
       )}
@@ -58,6 +62,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: Colors.white,
+  },
+  load: {
+    width: 35,
+    height: 35,
   },
 });
 

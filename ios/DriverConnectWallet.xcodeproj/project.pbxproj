@@ -15,6 +15,7 @@
 		61F9B8962BD9240A00BE70EE /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = 61F9B8952BD9240900BE70EE /* Fonts */; };
 		7699B88040F8A987B510C191 /* libPods-DriverConnectWallet-DriverConnectWalletTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-DriverConnectWallet-DriverConnectWalletTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		96899EB37F9879CE27F1D361 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D6EF329B2A31BAA26678D337 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -46,6 +47,7 @@
 		61F9B8952BD9240900BE70EE /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Fonts; path = "../node_modules/react-native-vector-icons/Fonts"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = DriverConnectWallet/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-DriverConnectWallet-DriverConnectWalletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DriverConnectWallet-DriverConnectWalletTests.release.xcconfig"; path = "Target Support Files/Pods-DriverConnectWallet-DriverConnectWalletTests/Pods-DriverConnectWallet-DriverConnectWalletTests.release.xcconfig"; sourceTree = "<group>"; };
+		D6EF329B2A31BAA26678D337 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = DriverConnectWallet/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -97,6 +99,7 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+				D6EF329B2A31BAA26678D337 /* PrivacyInfo.xcprivacy */,
 			);
 			name = DriverConnectWallet;
 			sourceTree = "<group>";
@@ -249,6 +252,7 @@
 				61F9B8962BD9240A00BE70EE /* Fonts in Resources */,
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				96899EB37F9879CE27F1D361 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

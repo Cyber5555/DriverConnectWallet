@@ -35,49 +35,62 @@ const RootNavigation = () => {
 
   return (
     <Stack.Navigator
+      initialRouteName={
+        hasTokenNotAuth ? 'Register' : notCar ? 'ScannerHomeTechnical' : 'Login'
+      }
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
       }}>
       {!isAuthenticated ? (
         <Stack.Group>
-          {hasTokenNotAuth ? (
-            <Stack.Group>
-              <Stack.Screen name="Register" component={Register} />
-              <Stack.Screen
-                name="ScannerHomeDriver"
-                component={ScannerHomeDriver}
-              />
-              <Stack.Screen
-                name="CameraScreenDriver"
-                component={CameraScreenDriver}
-              />
-              <Stack.Screen
-                name="DataDriverLicense"
-                component={DataDriverLicense}
-              />
-            </Stack.Group>
-          ) : notCar ? (
-            <Stack.Group>
-              <Stack.Screen
-                name="ScannerHomeTechnical"
-                component={ScannerHomeTechnical}
-              />
-              <Stack.Screen
-                name="CameraScreenTechnical"
-                component={CameraScreenTechnical}
-              />
-              <Stack.Screen name="DataAuto" component={DataAuto} />
-            </Stack.Group>
-          ) : (
-            <Stack.Group>
-              <Stack.Screen name="Login" component={Login} />
-              <Stack.Screen name="LoginOTP" component={LoginOTP} />
-            </Stack.Group>
-          )}
+          <Stack.Group>
+            <Stack.Screen name="Register" component={Register} />
+            <Stack.Screen
+              name="ScannerHomeDriver"
+              component={ScannerHomeDriver}
+            />
+            <Stack.Screen
+              name="CameraScreenDriver"
+              component={CameraScreenDriver}
+            />
+            <Stack.Screen
+              name="DataDriverLicense"
+              component={DataDriverLicense}
+            />
+          </Stack.Group>
+
+          <Stack.Group>
+            <Stack.Screen
+              name="ScannerHomeTechnical"
+              component={ScannerHomeTechnical}
+            />
+            <Stack.Screen
+              name="CameraScreenTechnical"
+              component={CameraScreenTechnical}
+            />
+            <Stack.Screen name="DataAuto" component={DataAuto} />
+          </Stack.Group>
+
+          <Stack.Group>
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="LoginOTP" component={LoginOTP} />
+          </Stack.Group>
         </Stack.Group>
       ) : (
-        <Stack.Screen name="Home" component={Home} />
+        <Stack.Group>
+          <Stack.Screen name="Home" component={Home} />
+
+          <Stack.Screen
+            name="ScannerHomeTechnical"
+            component={ScannerHomeTechnical}
+          />
+          <Stack.Screen
+            name="CameraScreenTechnical"
+            component={CameraScreenTechnical}
+          />
+          <Stack.Screen name="DataAuto" component={DataAuto} />
+        </Stack.Group>
       )}
     </Stack.Navigator>
   );

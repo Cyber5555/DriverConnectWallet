@@ -1,6 +1,5 @@
-/* eslint-disable react-native/no-inline-styles */
 import React, {memo} from 'react';
-import {View, Text, StyleSheet, Platform, Image} from 'react-native';
+import {View, Text, StyleSheet, Image} from 'react-native';
 import Colors from '../../Includes/Colors';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {useNavigation} from '@react-navigation/native';
@@ -15,11 +14,7 @@ const ScannerHomeTechnicalComponent = () => {
     useNavigation<NativeStackNavigationProp<RootNavigationProps>>();
 
   return (
-    <View
-      style={[
-        styles.container,
-        {paddingTop: Platform.OS === 'ios' ? insets.top : 20},
-      ]}>
+    <View style={[styles.container, {paddingTop: insets.top}]}>
       <Text style={styles.pageTitle}>Подготовьте СТС</Text>
       <Text style={styles.textInfo}>
         Следующим шагом нужно будет сфотографировать свидетельство о регистрации

@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, {memo} from 'react';
 import {
   View,
@@ -5,6 +6,7 @@ import {
   ViewStyle,
   TextInput,
   KeyboardTypeOptions,
+  Text,
 } from 'react-native';
 import Colors from '../Includes/Colors';
 
@@ -14,6 +16,8 @@ type DefaultInputProps = {
   onChangeText: (text: string) => void;
   value: string;
   keyboardType?: KeyboardTypeOptions;
+  label: string;
+  error: boolean;
 };
 
 const DefaultInputComponent = ({
@@ -22,15 +26,23 @@ const DefaultInputComponent = ({
   onChangeText,
   value,
   keyboardType = 'default',
+  label,
+  error,
 }: DefaultInputProps) => {
   return (
     <View style={{...styles.container, ...containerStyle}}>
+      <Text style={styles.label}>{label}</Text>
       <TextInput
         value={value}
-        style={styles.input}
+        style={[
+          styles.input,
+          {
+            borderColor: error ? Colors.red : 'transparent',
+          },
+        ]}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor={Colors.dark}
+        placeholderTextColor={Colors.darkGray}
         keyboardType={keyboardType}
       />
     </View>
@@ -40,7 +52,6 @@ const DefaultInputComponent = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: 60,
     marginBottom: 10,
   },
   input: {
@@ -50,6 +61,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     fontSize: 20,
     color: Colors.dark,
+    height: 55,
+    borderWidth: 1,
+  },
+  label: {
+    marginBottom: 5,
+    fontSize: 16,
+    color: Colors.darker,
   },
 });
 

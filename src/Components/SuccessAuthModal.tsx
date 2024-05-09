@@ -32,7 +32,7 @@ const SuccessAuthModalComponent = ({
           <Text style={styles.infos}>4) Пройдите фотоконтроль автомобиля</Text>
           <Text style={styles.infos}>5) Приступайте к выполнению заказов.</Text>
         </View>
-        <AdaptiveButton onPress={onPress}>ok</AdaptiveButton>
+        <AdaptiveButton onPress={onPress}>Далее</AdaptiveButton>
       </View>
     </Modal>
   );
