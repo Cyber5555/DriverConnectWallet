@@ -1,7 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
 import {
-  Text,
   StyleSheet,
   Image,
   useWindowDimensions,
@@ -24,6 +23,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import {LoginPayload, loginRequest} from './loginSlice';
 import {AppDispatch, RootState} from '../../../store/store';
 import {socialDataRequest} from './socialDataSlice';
+import {BoldText} from '../../../Includes/BoldText';
+import {RegularText} from '../../../Includes/RegularText';
 
 const LoginComponent = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -98,7 +99,9 @@ const LoginComponent = () => {
           style={[styles.logo, {width: width * 0.6, height: width * 0.7}]}
         />
         <View style={styles.bottomContainer}>
-          <Text style={styles.textWelcome}>Подключение к Яндекс Такси</Text>
+          <BoldText style={styles.textWelcome}>
+            Подключение к Яндекс Такси
+          </BoldText>
           <LoginInput
             label={'Введите номер телефона'}
             placeholder={'+x (xxx) xxx-xx-xx'}
@@ -117,9 +120,9 @@ const LoginComponent = () => {
             onPress={sendData}>
             ВХОД ИЛИ РЕГИСТРАЦИЯ
           </AdaptiveButton>
-          <Text style={styles.haveAQuestions}>
+          <RegularText style={styles.haveAQuestions}>
             «Есть вопросы? Напишите нам!»
-          </Text>
+          </RegularText>
           <View style={styles.wrapperIcons}>
             <FontAwesome
               name={'telegram'}
@@ -149,7 +152,6 @@ const styles = StyleSheet.create({
   },
   textWelcome: {
     fontSize: 24,
-    fontWeight: 'bold',
     color: Colors.darker,
     marginBottom: 40,
     textAlign: 'center',

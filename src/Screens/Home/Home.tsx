@@ -1,16 +1,20 @@
-import React, {memo} from 'react';
-import {View, Text, StyleSheet, StatusBar, FlatList} from 'react-native';
+import React, {memo, useCallback, useEffect} from 'react';
+import {View, StyleSheet, StatusBar, FlatList, Linking} from 'react-native';
 import Colors from '../../Includes/Colors';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {MoneyButton} from '../../Components/MoneyButton';
 import {WhatsAppIcon} from '../../Includes/configIcons';
-import {useSelector} from 'react-redux';
-import {RootState} from '../../store/store';
+import {useDispatch, useSelector} from 'react-redux';
+import {AppDispatch, RootState} from '../../store/store';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootNavigationProps} from '../../Router/RootNavigation';
+import {BoldText} from '../../Includes/BoldText';
+import {RegularText} from '../../Includes/RegularText';
+import {MediumText} from '../../Includes/MediumText';
+import {socialDataRequest} from '../Auth/Login/socialDataSlice';
 
 type DataType = {
   process: string;
@@ -97,14 +101,14 @@ const RenderItem = ({item}: {item: DataType}) => {
   return (
     <View style={styles.renderItem}>
       <View style={styles.renderItemWrapper}>
-        <Text style={styles.renderItemTitle}>{item.process}</Text>
-        <Text style={styles.renderItemPrice}>{item.price} ₽</Text>
+        <RegularText style={styles.renderItemTitle}>{item.process}</RegularText>
+        <MediumText style={styles.renderItemPrice}>{item.price} ₽</MediumText>
       </View>
       <View style={styles.renderItemWrapper}>
-        <Text style={styles.renderItemMessage} numberOfLines={1}>
+        <RegularText style={styles.renderItemMessage} numberOfLines={1}>
           {item.message}
-        </Text>
-        <Text style={styles.renderItemDate}>{item.date}</Text>
+        </RegularText>
+        <RegularText style={styles.renderItemDate}>{item.date}</RegularText>
       </View>
     </View>
   );
@@ -112,11 +116,24 @@ const RenderItem = ({item}: {item: DataType}) => {
 
 const HomeComponent = () => {
   const insets = useSafeAreaInsets();
-  const {auth_user_info, auth_user_car_info, balance} = useSelector(
-    (state: RootState) => state.authUserInfoSlice,
-  );
+  const dispatch = useDispatch<AppDispatch>();
+  const {balance} = useSelector((state: RootState) => state.authUserInfoSlice);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootNavigationProps>>();
+  const {telegram, whatsApp} = useSelector(
+    (state: RootState) => state.socialDataSlice,
+  );
+  const linkToTelegram = useCallback(() => {
+    Linking.openURL(telegram);
+  }, [telegram]);
+
+  const linkToWhatsApp = useCallback(() => {
+    Linking.openURL(whatsApp);
+  }, [whatsApp]);
+
+  useEffect(() => {
+    dispatch(socialDataRequest());
+  }, [dispatch]);
 
   return (
     <View
@@ -124,59 +141,39 @@ const HomeComponent = () => {
         ...styles.container,
         ...{paddingTop: insets.top},
       }}>
-      <StatusBar
-        animated={true}
-        translucent={true}
-        barStyle={'light-content'}
-      />
-      <AntDesign
-        name={'edit'}
-        color={Colors.white}
-        size={28}
-        style={{...styles.edit, ...{top: insets.top + 25}}}
-        onPress={() => navigation.navigate('ScannerHomeTechnical')}
-      />
-      <Text style={styles.parkName}>Парк Grot</Text>
-      <Text style={styles.name_surname}>
-        {auth_user_info?.name} {auth_user_info?.surname}
-      </Text>
-      {auth_user_car_info?.mark?.name ? (
-        <Text style={styles.carData}>
-          {auth_user_car_info?.color} {auth_user_car_info?.mark?.name}{' '}
-          {auth_user_car_info?.model?.name} {auth_user_car_info?.callsign}
-        </Text>
-      ) : null}
+      <StatusBar animated={true} translucent={true} barStyle={'dark-content'} />
 
-      <Text style={styles.price}>
-        {balance !== undefined ? balance.toFixed(0) + ' ₽' : 0 + ' ₽'}
-      </Text>
-
-      <View>
-        <View style={styles.wrapperIcons}>
+      <View style={styles.headerBar}>
+        <AntDesign
+          name={'user'}
+          color={Colors.black}
+          size={28}
+          onPress={() => navigation.navigate('User')}
+        />
+        <BoldText style={styles.parkName}>Парк Grot</BoldText>
+        <View style={styles.wrapperIcon}>
           <FontAwesome
             name={'telegram'}
             color={Colors.lightBlue}
-            size={50}
-            // onPress={linkToTelegram}
+            size={40}
+            onPress={linkToTelegram}
           />
-          <WhatsAppIcon
-            width={50}
-            height={50}
-            // onPress={linkToWhatsApp}
-          />
+          <WhatsAppIcon width={50} height={50} onPress={linkToWhatsApp} />
         </View>
       </View>
+      <RegularText style={styles.price}>
+        {balance !== undefined ? balance.toFixed(0) + ' ₽' : 0 + ' ₽'}
+      </RegularText>
+
       <View style={styles.buttons}>
         <MoneyButton iconType={'Input'} />
         <MoneyButton iconType={'OutPut'} />
       </View>
       <View
-        style={{
-          ...styles.flatListContainer,
-          ...{marginBottom: insets.bottom},
-        }}>
+        style={{...styles.flatListContainer, ...{marginBottom: insets.bottom}}}>
         <FlatList
           data={data}
+          showsVerticalScrollIndicator={true}
           renderItem={({item}) => {
             return <RenderItem item={item} />;
           }}
@@ -189,31 +186,20 @@ const HomeComponent = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.black,
+    backgroundColor: Colors.white,
     paddingHorizontal: 20,
   },
   parkName: {
-    color: Colors.white,
+    color: Colors.dark,
     textAlign: 'center',
-    marginTop: 20,
     fontSize: 30,
   },
-  name_surname: {
-    color: Colors.white,
-    textAlign: 'center',
-    marginTop: 20,
-    fontSize: 20,
-  },
-  carData: {
-    color: Colors.white,
-    textAlign: 'center',
-    marginTop: 20,
-    fontSize: 20,
+  wrapperIcon: {
+    alignItems: 'center',
   },
   price: {
-    color: Colors.white,
+    color: Colors.dark,
     textAlign: 'center',
-    marginTop: 20,
     fontSize: 25,
   },
   buttons: {
@@ -221,11 +207,10 @@ const styles = StyleSheet.create({
     gap: 10,
     marginTop: 20,
   },
-  wrapperIcons: {
+  headerBar: {
     flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    columnGap: 30,
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
     marginTop: 20,
   },
   flatListContainer: {
@@ -233,13 +218,18 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    overflow: 'hidden',
+    // overflow: 'hidden',
+    backgroundColor: Colors.white,
+    elevation: 8,
+    shadowColor: Colors.black,
+    shadowRadius: 5,
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 0.25,
   },
   renderItem: {
     width: '100%',
-    backgroundColor: Colors.white,
     borderBottomWidth: 1,
-    borderBlockColor: Colors.gray,
+    borderBottomColor: Colors.gray,
     padding: 10,
     rowGap: 10,
   },
@@ -255,7 +245,6 @@ const styles = StyleSheet.create({
   renderItemPrice: {
     color: Colors.dark,
     fontSize: 18,
-    fontWeight: '500',
   },
   renderItemMessage: {
     fontSize: 13,
@@ -265,10 +254,6 @@ const styles = StyleSheet.create({
   renderItemDate: {
     fontSize: 13,
     color: Colors.darkGray,
-  },
-  edit: {
-    position: 'absolute',
-    right: 10,
   },
 });
 

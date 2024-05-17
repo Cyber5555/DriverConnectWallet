@@ -22,7 +22,6 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootNavigationProps} from '../../Router/RootNavigation';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Defs, Mask, Rect, Svg} from 'react-native-svg';
-import {Text} from 'react-native';
 import {
   SendTechnicalPassportPayload,
   sendTechnicalPassportRequest,
@@ -37,6 +36,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import {RegularText} from '../../Includes/RegularText';
 
 type FlashType = 'auto' | 'off' | 'on' | undefined;
 type PageType = 'first' | 'second';
@@ -73,7 +73,6 @@ const CameraTechnicalComponent = () => {
     setFlash(prevFlash => (prevFlash === 'on' ? 'off' : 'on'));
   }, []);
 
-  // let imageData: string[] = [];
   const takePhoto = useCallback(async () => {
     setNoCamera(true);
     if (cameraRef.current) {
@@ -99,6 +98,7 @@ const CameraTechnicalComponent = () => {
           }, 2000);
         } else if (imagePath && page === 'second') {
           imageData.current = [...imageData.current, imagePath];
+          cardRotateAnimation.value = '0deg';
           setPage('first');
           setNoCamera(true);
         }
@@ -121,22 +121,29 @@ const CameraTechnicalComponent = () => {
               image2: imageData.current[1],
               authUser,
             }),
-          ).then(result => {
-            if (isSendDriverLicensePayload(result.payload)) {
-              const payload: SendTechnicalPassportPayload = result.payload;
-              if (payload.status) {
-                const userData: User = {
-                  car_license_front_photo:
-                    payload.data?.car_license_front_photo,
-                  car_license_back_photo: payload.data?.car_license_back_photo,
-                };
-                login(userData);
-                setNoCamera(false);
+          )
+            .then(result => {
+              if (isSendDriverLicensePayload(result.payload)) {
+                const payload: SendTechnicalPassportPayload = result.payload;
+                if (payload.status) {
+                  const userData: User = {
+                    car_license_front_photo:
+                      payload.data?.car_license_front_photo,
+                    car_license_back_photo:
+                      payload.data?.car_license_back_photo,
+                  };
+                  login(userData);
+                  setNoCamera(false);
 
-                navigation.navigate('DataAuto');
+                  navigation.navigate('DataAuto');
+                }
+              } else {
+                navigation.navigate('ScannerHomeTechnical');
               }
-            }
-          });
+            })
+            .catch(error => {
+              console.log('📢 [CameraScreenTechnical.tsx:143]', error.response);
+            });
           imageData.current = [];
         }
       } catch (error) {
@@ -203,34 +210,22 @@ const CameraTechnicalComponent = () => {
             top: insets.top + 70,
           },
         ]}>
-        <Text style={styles.cameraText}>
+        <RegularText style={styles.cameraText}>
           {page === 'first' ? 'СТС Передняя часть' : 'СТС Задняя часть'}
-        </Text>
+        </RegularText>
       </View>
       {device && hasPermission && (
-        <View
-          style={[
-            StyleSheet.absoluteFillObject,
-            styles.cameraFrame,
-            {
-              top: width / 2.5,
-              height: height / 1.7,
-              width: width - 100,
-            },
-          ]}>
-          <Camera
-            ref={cameraRef}
-            style={styles.camera}
-            device={device}
-            photo={true}
-            resizeMode={'cover'}
-            focusable={true}
-            isActive={isFocused}
-            format={format}
-            // frameProcessor={frameProcessor}
-            pixelFormat={'yuv'}
-          />
-        </View>
+        <Camera
+          ref={cameraRef}
+          style={StyleSheet.absoluteFill}
+          device={device}
+          photo={true}
+          resizeMode={'cover'}
+          focusable={true}
+          isActive={isFocused}
+          format={format}
+          pixelFormat={'yuv'}
+        />
       )}
       <Svg width={'100%'} height={'100%'} style={styles.svg}>
         <Defs>
@@ -323,10 +318,7 @@ const styles = StyleSheet.create({
   cameraText: {
     color: Colors.white,
   },
-  cameraFrame: {
-    left: 50,
-  },
-  camera: {flex: 1},
+
   cameraButton: {
     position: 'absolute',
     backgroundColor: Colors.white,

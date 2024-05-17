@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {Http} from '../../../http';
+import {useAuth} from '../../Context/AuthContext';
 
 interface AuthUserInfoData {
   token: string | null | undefined;
@@ -45,6 +46,11 @@ export const authUserInfoRequest = createAsyncThunk<
       );
       return response.data;
     } catch (error: any) {
+      const {loadUserData, logout} = useAuth();
+
+      logout();
+      loadUserData(false);
+
       return rejectWithValue(error.response.data);
     }
   },
@@ -61,6 +67,7 @@ const authUserInfoSlice = createSlice({
       })
       .addCase(authUserInfoRequest.fulfilled, (state, {payload}) => {
         const {user, car, balance} = payload;
+        console.log('📢 [authUserInfoSlice.ts:71]', payload);
         state.auth_user_info = user;
         state.auth_user_car_info = car;
         state.balance = balance;

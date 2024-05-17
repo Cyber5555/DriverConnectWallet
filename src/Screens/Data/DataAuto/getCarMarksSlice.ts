@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-import {User} from '../../../Context/AuthContext';
+import {User, useAuth} from '../../../Context/AuthContext';
 import {Http} from '../../../../http';
 
 interface GetCarMarksData {
@@ -39,6 +39,12 @@ export const getCarMarksRequest = createAsyncThunk<
       );
       return response.data;
     } catch (error: any) {
+      if (error.response.data.message === 'Unauthenticated.') {
+        const {loadUserData, logout} = useAuth();
+
+        logout();
+        loadUserData(false);
+      }
       return rejectWithValue(error.response.data);
     }
   },

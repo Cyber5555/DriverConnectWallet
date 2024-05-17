@@ -1,8 +1,9 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {memo} from 'react';
-import {View, Text, StyleSheet, ViewStyle} from 'react-native';
+import {View, StyleSheet, ViewStyle} from 'react-native';
 import Colors from '../Includes/Colors';
 import MaskInput from 'react-native-mask-input';
+import {RegularText} from '../Includes/RegularText';
 
 type LoginInputProps = {
   label: string;
@@ -25,7 +26,7 @@ const LoginInputComponent = ({
 }: LoginInputProps) => {
   return (
     <View style={{...styles.container, ...containerStyle}}>
-      <Text style={styles.label}>{label}</Text>
+      <RegularText style={styles.label}>{label}</RegularText>
       <MaskInput
         value={phone}
         style={[

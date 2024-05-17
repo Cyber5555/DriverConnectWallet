@@ -1,13 +1,8 @@
 import React, {memo} from 'react';
-import {
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ViewStyle,
-  TextStyle,
-} from 'react-native';
+import {StyleSheet, TouchableOpacity, ViewStyle, TextStyle} from 'react-native';
 import Colors from '../Includes/Colors';
 import LoaderKit from 'react-native-loader-kit';
+import {BoldText} from '../Includes/BoldText';
 
 type AdaptiveButtonProps = {
   children: string;
@@ -42,7 +37,7 @@ const AdaptiveButtonComponent = ({
           color={Colors.white}
         />
       ) : (
-        <Text style={{...styles.text, ...textStyle}}>{children}</Text>
+        <BoldText style={{...styles.text, ...textStyle}}>{children}</BoldText>
       )}
     </TouchableOpacity>
   );
@@ -60,7 +55,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 20,
-    fontWeight: 'bold',
     color: Colors.white,
   },
   load: {

@@ -3,7 +3,6 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {memo, useCallback, useEffect, useState} from 'react';
 import {
-  Text,
   StyleSheet,
   Platform,
   ScrollView,
@@ -24,13 +23,23 @@ import {getCarModelRequest} from './getCarModelSlice';
 import {carColorRequest} from './carColorSlice';
 import {createNewCarRequest} from './createNewCarSlice';
 import {SuccessAuthModal} from '../../../Components/SuccessAuthModal';
+import {showMessage} from 'react-native-flash-message';
+import {BoldText} from '../../../Includes/BoldText';
+
+const currentYear = new Date().getFullYear();
+const yearsCount = 30;
+
+const dataYear: DataType[] = Array.from({length: yearsCount}, (_, index) => {
+  const year = currentYear - index;
+  return {name: String(year), id: String(Math.random() * 10)};
+});
 
 const DataAutoComponent = () => {
   const insets = useSafeAreaInsets();
-  const {loadUserData} = useAuth();
+  const {loadUserData, authUser} = useAuth();
   const dispatch = useDispatch<AppDispatch>();
   const [successModal, setSuccessModal] = useState<boolean>(false);
-  const {authUser} = useAuth();
+
   const navigation =
     useNavigation<NativeStackNavigationProp<RootNavigationProps>>();
   const {technical_data, loading} = useSelector(
@@ -51,7 +60,7 @@ const DataAutoComponent = () => {
   const [disableButton, setDisableButton] = useState<boolean>(true);
   const [inputData, setInputData] = useState({
     gnAuto: '',
-    year: '',
+    year: {name: '', id: ''},
     ctc: '',
     vin: '',
   });
@@ -76,7 +85,7 @@ const DataAutoComponent = () => {
     setInputData({
       gnAuto: technical_data.callsign,
       ctc: technical_data.licence_plate_number,
-      year: technical_data.year,
+      year: {name: technical_data.year, id: String(Math.random() * 10)},
       vin: technical_data.vin,
     });
   }, [technical_data]);
@@ -147,7 +156,7 @@ const DataAutoComponent = () => {
     }).every(item => item !== undefined && item !== null && item !== '');
 
     setDisableButton(!allValuesNotEmpty);
-  }, [carMarks, carModels, colors, inputData, technical_data]);
+  }, [carMarks, carModels, colors, inputData, insets.top, technical_data]);
 
   const createNewCar = useCallback(() => {
     setErrorData({
@@ -159,6 +168,7 @@ const DataAutoComponent = () => {
       vin: !inputData.vin,
       year: !inputData.year,
     });
+
     if (!disableButton) {
       const carData = {
         authUser,
@@ -166,18 +176,53 @@ const DataAutoComponent = () => {
         licence_plate_number: inputData.ctc,
         mark_name: carMarks.name,
         model_name: carModels?.name,
-        year: Number(inputData.year),
+        year: Number(inputData.year.name),
         vin: technical_data.vin,
         color_name: colors.name,
         car_license_front_photo: authUser?.car_license_front_photo,
         car_license_back_photo: authUser?.car_license_back_photo,
       };
 
-      dispatch(createNewCarRequest(carData)).then((result: any) => {
-        if (result.payload.status) {
-          setSuccessModal(true);
-        }
-      });
+      dispatch(createNewCarRequest(carData))
+        .then((result: any) => {
+          if (result.payload.status) {
+            setSuccessModal(true);
+          } else {
+            console.log('📢 [DataAuto.tsx:191]', result.payload);
+            showMessage({
+              message: result.payload?.yandex_error?.message,
+              animated: true,
+              type: 'danger',
+              duration: 5000,
+              icon: {
+                icon: 'danger',
+                position: 'left',
+                props: {},
+              },
+              style: {
+                height: insets.top + 50,
+                paddingTop: Platform.OS === 'android' ? insets.top + 10 : 10,
+              },
+            });
+          }
+        })
+        .catch(error => {
+          showMessage({
+            message: error.response,
+            animated: true,
+            type: 'danger',
+            duration: 5000,
+            icon: {
+              icon: 'danger',
+              position: 'left',
+              props: {},
+            },
+            style: {
+              height: insets.top + 50,
+              paddingTop: Platform.OS === 'android' ? insets.top + 10 : 10,
+            },
+          });
+        });
     }
   }, [
     carMarks.name,
@@ -191,6 +236,7 @@ const DataAutoComponent = () => {
     authUser,
     technical_data.vin,
     dispatch,
+    insets.top,
   ]);
 
   const buttonContainerStyle = disableButton
@@ -205,9 +251,10 @@ const DataAutoComponent = () => {
         visible={successModal}
         onPress={() => {
           setSuccessModal(false);
-          loadUserData();
+          loadUserData(true);
         }}
       />
+
       <ScrollView
         style={styles.scrollView}
         needsOffscreenAlphaCompositing={false}
@@ -219,9 +266,9 @@ const DataAutoComponent = () => {
           style={{marginTop: 20}}
           onPress={() => navigation.goBack()}
         />
-        <Text style={styles.pageTitle}>
+        <BoldText style={styles.pageTitle}>
           Регистрация в агрегаторе: Данные авто
-        </Text>
+        </BoldText>
         <DefaultInput
           onChangeText={text => {
             handleTextChange(text, 'gnAuto');
@@ -255,16 +302,18 @@ const DataAutoComponent = () => {
           }}
           error={errorData.carModels}
         />
-        <DefaultInput
-          onChangeText={text => {
+        <AccordionInput
+          placeholder={'Год выпуска'}
+          data={dataYear}
+          setValue={text => {
             handleTextChange(text, 'year');
             setErrorData({...errorData, year: false});
           }}
-          placeholder={'Год выпуска'}
-          value={inputData?.year}
+          value={inputData?.year || {name: '', id: ''}}
           label={'Год'}
           error={errorData.year}
         />
+
         <AccordionInput
           label={'Цвет'}
           placeholder={'Не указан'}
@@ -319,7 +368,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   pageTitle: {
-    fontWeight: 'bold',
     fontSize: 17,
     marginTop: 10,
     marginBottom: 20,

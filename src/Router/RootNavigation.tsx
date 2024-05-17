@@ -11,6 +11,7 @@ import {CameraScreenDriver} from '../Screens/ScannerDriverLicense/CameraScreenDr
 import {DataDriverLicense} from '../Screens/Data/DataDriverLicense/DataDriverLicense';
 import {Home} from '../Screens/Home/Home';
 import {useAuth} from '../Context/AuthContext';
+import {User} from '../Screens/User/User';
 
 const Stack = createNativeStackNavigator<RootNavigationProps>();
 
@@ -28,6 +29,7 @@ export type RootNavigationProps = {
   DataAuto: undefined;
   Home: undefined;
   ScannerHomeTechnical: undefined;
+  User: undefined;
 };
 
 const RootNavigation = () => {
@@ -36,7 +38,13 @@ const RootNavigation = () => {
   return (
     <Stack.Navigator
       initialRouteName={
-        hasTokenNotAuth ? 'Register' : notCar ? 'ScannerHomeTechnical' : 'Login'
+        isAuthenticated
+          ? 'Home'
+          : hasTokenNotAuth
+          ? 'Register'
+          : notCar
+          ? 'ScannerHomeTechnical'
+          : 'Login'
       }
       screenOptions={{
         headerShown: false,
@@ -44,42 +52,45 @@ const RootNavigation = () => {
       }}>
       {!isAuthenticated ? (
         <Stack.Group>
-          <Stack.Group>
-            <Stack.Screen name="Register" component={Register} />
-            <Stack.Screen
-              name="ScannerHomeDriver"
-              component={ScannerHomeDriver}
-            />
-            <Stack.Screen
-              name="CameraScreenDriver"
-              component={CameraScreenDriver}
-            />
-            <Stack.Screen
-              name="DataDriverLicense"
-              component={DataDriverLicense}
-            />
-          </Stack.Group>
-
-          <Stack.Group>
-            <Stack.Screen
-              name="ScannerHomeTechnical"
-              component={ScannerHomeTechnical}
-            />
-            <Stack.Screen
-              name="CameraScreenTechnical"
-              component={CameraScreenTechnical}
-            />
-            <Stack.Screen name="DataAuto" component={DataAuto} />
-          </Stack.Group>
-
-          <Stack.Group>
-            <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="LoginOTP" component={LoginOTP} />
-          </Stack.Group>
+          {hasTokenNotAuth ? (
+            <Stack.Group>
+              <Stack.Screen name="Register" component={Register} />
+              <Stack.Screen
+                name="ScannerHomeDriver"
+                component={ScannerHomeDriver}
+              />
+              <Stack.Screen
+                name="CameraScreenDriver"
+                component={CameraScreenDriver}
+              />
+              <Stack.Screen
+                name="DataDriverLicense"
+                component={DataDriverLicense}
+              />
+            </Stack.Group>
+          ) : notCar ? (
+            <Stack.Group>
+              <Stack.Screen
+                name="ScannerHomeTechnical"
+                component={ScannerHomeTechnical}
+              />
+              <Stack.Screen
+                name="CameraScreenTechnical"
+                component={CameraScreenTechnical}
+              />
+              <Stack.Screen name="DataAuto" component={DataAuto} />
+            </Stack.Group>
+          ) : (
+            <Stack.Group>
+              <Stack.Screen name="Login" component={Login} />
+              <Stack.Screen name="LoginOTP" component={LoginOTP} />
+            </Stack.Group>
+          )}
         </Stack.Group>
       ) : (
         <Stack.Group>
           <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="User" component={User} />
 
           <Stack.Screen
             name="ScannerHomeTechnical"

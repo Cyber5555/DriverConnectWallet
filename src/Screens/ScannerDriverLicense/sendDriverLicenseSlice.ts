@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {Http} from '../../../http';
-import {User} from '../../Context/AuthContext';
+import {User, useAuth} from '../../Context/AuthContext';
 
 interface SendDriverLicenseData {
   image1: string;
@@ -11,6 +11,7 @@ interface SendDriverLicenseData {
 export interface SendDriverLicensePayload {
   status: boolean;
   data: any;
+  message: string;
 }
 
 interface SendDriverLicenseState {
@@ -20,6 +21,7 @@ interface SendDriverLicenseState {
   scanning_person_full_name_first_name: string;
   scanning_person_full_name_last_name: string;
   scanning_person_full_name_middle_name: string;
+  error_message: string;
   loading: boolean;
 }
 
@@ -31,6 +33,7 @@ const initialState: SendDriverLicenseState = {
   scanning_person_full_name_first_name: '',
   scanning_person_full_name_last_name: '',
   scanning_person_full_name_middle_name: '',
+  error_message: '',
 };
 
 export const sendDriverLicenseRequest = createAsyncThunk<
@@ -64,6 +67,12 @@ export const sendDriverLicenseRequest = createAsyncThunk<
       );
       return response.data;
     } catch (error: any) {
+      if (error.response.data.message === 'Unauthenticated.') {
+        const {loadUserData, logout} = useAuth();
+
+        logout();
+        loadUserData(false);
+      }
       return rejectWithValue(error.response.data);
     }
   },
@@ -77,10 +86,12 @@ const sendDriverLicenseSlice = createSlice({
     builder
       .addCase(sendDriverLicenseRequest.pending, state => {
         state.loading = true;
+        state.error_message = '';
       })
       .addCase(sendDriverLicenseRequest.fulfilled, (state, action) => {
         const {data} = action.payload;
         state.loading = false;
+        state.error_message = '';
 
         if ('driver_license_expiry_date' in data) {
           state.driver_license_expiry_date = new Date(
@@ -111,8 +122,10 @@ const sendDriverLicenseSlice = createSlice({
           state.driver_license_number = data.driver_license_number;
         }
       })
-      .addCase(sendDriverLicenseRequest.rejected, state => {
+      .addCase(sendDriverLicenseRequest.rejected, (state, {payload}) => {
         state.loading = false;
+        const {message} = payload as SendDriverLicensePayload;
+        state.error_message = message;
       });
   },
 });

@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
-import React, {memo} from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import React, {memo, useEffect} from 'react';
+import {View, StyleSheet, Image, Platform} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Colors from '../../Includes/Colors';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
@@ -8,34 +8,61 @@ import {useNavigation} from '@react-navigation/native';
 import {AdaptiveButton} from '../../Components/AdaptiveButton';
 import {RootNavigationProps} from '../../Router/RootNavigation';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useSelector} from 'react-redux';
+import {RootState} from '../../store/store';
+import {showMessage} from 'react-native-flash-message';
+import {BoldText} from '../../Includes/BoldText';
+import {RegularText} from '../../Includes/RegularText';
 
 const ScannerHomeDriverComponent = () => {
   const insets = useSafeAreaInsets();
-
+  const {error_message} = useSelector(
+    (state: RootState) => state.sendDriverLicenseSlice,
+  );
   const navigation =
     useNavigation<NativeStackNavigationProp<RootNavigationProps>>();
+
+  useEffect(() => {
+    if (error_message !== '') {
+      showMessage({
+        message: error_message,
+        animated: true,
+        type: 'danger',
+        duration: 5000,
+        icon: {
+          icon: 'danger',
+          position: 'left',
+          props: {},
+        },
+        style: {
+          height: insets.top + 50,
+          paddingTop: Platform.OS === 'android' ? insets.top + 10 : 10,
+        },
+      });
+    }
+  }, [error_message, insets.top]);
 
   return (
     <View style={[styles.container, {paddingTop: insets.top}]}>
       <AntDesign
         name={'arrowleft'}
-        color={Colors.white}
+        color={Colors.black}
         style={{marginTop: 20}}
         size={24}
         onPress={() => navigation.goBack()}
       />
 
-      <Text style={styles.pageTitle}>
+      <BoldText style={styles.pageTitle}>
         Подготовьте водительское удостоверение
-      </Text>
-      <Text style={styles.textInfo}>
+      </BoldText>
+      <RegularText style={styles.textInfo}>
         Следующим шагом нужно будет сфотографировать водительское удостоверение,
         мы распознаем данные вашего документа, для создания вашего профиля в
         агрегаторе.
-      </Text>
-      <Text style={styles.importantSendSTS}>
-        Подготовьте водительское удостоверение
-      </Text>
+      </RegularText>
+      <RegularText style={styles.importantSendSTS}>
+        Изображение должно быть четким, без бликов и хорошо читаемым
+      </RegularText>
       <View
         style={[styles.imageButtonContainer, {marginBottom: insets.bottom}]}>
         <Image
@@ -57,21 +84,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
-    backgroundColor: Colors.black,
+    backgroundColor: Colors.white,
   },
   pageTitle: {
-    color: Colors.white,
+    color: Colors.dark,
     fontSize: 25,
-    fontWeight: 'bold',
     marginTop: 50,
   },
   importantSendSTS: {
-    color: Colors.white,
+    color: Colors.dark,
     fontSize: 22,
     marginTop: 20,
   },
   textInfo: {
-    color: Colors.white,
+    color: Colors.dark,
     fontSize: 22,
     marginTop: 30,
   },

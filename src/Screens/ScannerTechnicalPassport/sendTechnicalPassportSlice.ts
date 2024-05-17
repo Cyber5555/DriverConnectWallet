@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {Http} from '../../../http';
-import {User} from '../../Context/AuthContext';
+import {User, useAuth} from '../../Context/AuthContext';
 
 interface SendTechnicalPassportData {
   image1: string;
@@ -11,16 +11,19 @@ interface SendTechnicalPassportData {
 export interface SendTechnicalPassportPayload {
   status: boolean;
   data: any;
+  message: 'string';
 }
 
 interface SendTechnicalPassportState {
   technical_data: any;
   loading: boolean;
+  error_message: string;
 }
 
 const initialState: SendTechnicalPassportState = {
   technical_data: {},
   loading: false,
+  error_message: '',
 };
 
 export const sendTechnicalPassportRequest = createAsyncThunk<
@@ -54,6 +57,12 @@ export const sendTechnicalPassportRequest = createAsyncThunk<
       );
       return response.data;
     } catch (error: any) {
+      if (error.response.data.message === 'Unauthenticated.') {
+        const {loadUserData, logout} = useAuth();
+
+        logout();
+        loadUserData(false);
+      }
       return rejectWithValue(error.response.data);
     }
   },
@@ -67,14 +76,18 @@ const sendTechnicalPassportSlice = createSlice({
     builder
       .addCase(sendTechnicalPassportRequest.pending, state => {
         state.loading = true;
+        state.error_message = '';
       })
       .addCase(sendTechnicalPassportRequest.fulfilled, (state, action) => {
         const {data} = action.payload;
         state.loading = false;
         state.technical_data = data;
+        state.error_message = '';
       })
-      .addCase(sendTechnicalPassportRequest.rejected, state => {
+      .addCase(sendTechnicalPassportRequest.rejected, (state, {payload}) => {
         state.loading = false;
+        const {message} = payload as SendTechnicalPassportPayload;
+        state.error_message = message;
       });
   },
 });

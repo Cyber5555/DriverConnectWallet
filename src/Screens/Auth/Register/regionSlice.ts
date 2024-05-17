@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {Http} from '../../../../http';
-import {User} from '../../../Context/AuthContext';
+import {User, useAuth} from '../../../Context/AuthContext';
 
 interface RegionData {
   authUser: User | null;
@@ -34,6 +34,12 @@ export const regionRequest = createAsyncThunk<RegionPayload, RegionData>(
       );
       return response.data;
     } catch (error: any) {
+      if (error.response.data.message === 'Unauthenticated.') {
+        const {loadUserData, logout} = useAuth();
+
+        logout();
+        loadUserData(true);
+      }
       return rejectWithValue(error.response.data);
     }
   },

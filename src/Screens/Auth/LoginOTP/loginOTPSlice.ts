@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {Http} from '../../../../http';
+import {useAuth} from '../../../Context/AuthContext';
 
 interface LoginOTPData {
   phone: string;
@@ -56,6 +57,12 @@ export const loginOTPRequest = createAsyncThunk<LoginOTPPayload, LoginOTPData>(
       );
       return response.data;
     } catch (error: any) {
+      if (error.response.data.message === 'Unauthenticated.') {
+        const {loadUserData, logout} = useAuth();
+
+        logout();
+        loadUserData(true);
+      }
       return rejectWithValue(error.response.data);
     }
   },

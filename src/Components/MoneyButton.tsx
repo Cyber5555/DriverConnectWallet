@@ -1,7 +1,8 @@
 import React, {memo} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import {InputMoney, OutputMoney} from '../Includes/configIcons';
 import Colors from '../Includes/Colors';
+import {RegularText} from '../Includes/RegularText';
 
 type MoneyButtonProps = {
   iconType: 'Input' | 'OutPut';
@@ -14,16 +15,16 @@ const MoneyButtonComponent = ({iconType}: MoneyButtonProps) => {
         <>
           <InputMoney color={Colors.white} width={50} height={50} />
           <View>
-            <Text style={styles.text}>Пополнить</Text>
-            <Text style={styles.text}>баланс</Text>
+            <RegularText style={styles.text}>Пополнить</RegularText>
+            <RegularText style={styles.text}>баланс</RegularText>
           </View>
         </>
       ) : (
         <>
           <OutputMoney color={Colors.white} width={50} height={50} />
           <View>
-            <Text style={styles.text}>Вывести</Text>
-            <Text style={styles.text}>деньги</Text>
+            <RegularText style={styles.text}>Вывести</RegularText>
+            <RegularText style={styles.text}>деньги</RegularText>
           </View>
         </>
       )}

@@ -2,7 +2,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {memo, useCallback, useEffect, useRef, useState} from 'react';
 import {
-  Text,
   StyleSheet,
   Image,
   useWindowDimensions,
@@ -30,6 +29,8 @@ import {User, useAuth} from '../../../Context/AuthContext';
 import {useIsFocused} from '@react-navigation/native';
 import {CountdownTimer} from '../../../Components/CountdownTimer';
 import {loginRequest} from '../Login/loginSlice';
+import {BoldText} from '../../../Includes/BoldText';
+import {RegularText} from '../../../Includes/RegularText';
 
 type RouteParams = {
   key: string;
@@ -46,11 +47,11 @@ const LoginOTPComponent = () => {
   const {params} = useRoute<RouteParams>();
   const [inputValue, setInputValue] = useState('');
   const {code} = useSelector((state: RootState) => state.loginSlice);
-  const {loading, error, successCode, token} = useSelector(
+  const {loading, error, successCode, token, user} = useSelector(
     (state: RootState) => state.loginOTPSlice,
   );
 
-  const {login} = useAuth();
+  const {login, loadUserData} = useAuth();
   const {width} = useWindowDimensions();
   const scrollViewRef = useRef<ScrollView>(null);
   const otpInputRef = useRef<OTPTextInput>(null);
@@ -95,20 +96,16 @@ const LoginOTPComponent = () => {
     if (error.message === 'Неверный код потверждения') {
       Vibration.vibrate();
     } else if (successCode) {
-      const userToken: User = {token: token};
+      const userToken: User = {
+        token: token,
+        job_category_id: user?.job_category_id,
+        create_account_status: user?.create_account_status,
+        add_car_status: user?.add_car_status,
+      };
+
       login(userToken);
+      loadUserData(false);
       dispatch(clearError());
-
-      // if (user.create_account_status === '0') {
-
-      navigation.navigate('Register');
-
-      // } else if (
-      //   user.add_car_status === '0' &&
-      //   user.create_account_status === '1'
-      // ) {
-      //   navigation.navigate('ScannerHomeTechnical');
-      // }
     }
   }, [error.message, successCode, token]);
 
@@ -139,13 +136,15 @@ const LoginOTPComponent = () => {
           style={[styles.logo, {width: width * 0.6, height: width * 0.7}]}
         />
         <View style={styles.bottomContainer}>
-          <Text style={styles.textWelcome}>Вход</Text>
-          <Text style={styles.textInfo}>
+          <BoldText style={styles.textWelcome}>Вход</BoldText>
+          <RegularText style={styles.textInfo}>
             SMS с кодом авторизации отправлено на указанный номер телефона. Для
             входа в аккаунт введите его в поле ниже.
-          </Text>
+          </RegularText>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Text style={styles.falseNumber}>Неверный номер?</Text>
+            <RegularText style={styles.falseNumber}>
+              Неверный номер?
+            </RegularText>
           </TouchableOpacity>
           <OTPTextInput
             containerStyle={styles.inputContainerStyle}
@@ -209,7 +208,6 @@ const styles = StyleSheet.create({
   },
   textWelcome: {
     fontSize: 25,
-    fontWeight: 'bold',
     color: Colors.darker,
     marginBottom: 40,
   },

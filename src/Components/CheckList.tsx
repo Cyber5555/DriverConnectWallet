@@ -1,13 +1,8 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {Dispatch, SetStateAction, memo, useCallback} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  useWindowDimensions,
-  Pressable,
-} from 'react-native';
+import {View, StyleSheet, useWindowDimensions, Pressable} from 'react-native';
 import Colors from '../Includes/Colors';
+import {RegularText} from '../Includes/RegularText';
 
 type DataType = {
   name: string;
@@ -54,25 +49,25 @@ const CheckLIstComponent = ({
             borderColor: error ? Colors.red : 'transparent',
           },
         ]}>
-        <Text
-          style={[
-            styles.renderItemText,
-            {
+        <RegularText
+          style={{
+            ...styles.renderItemText,
+            ...{
               color:
                 item.id.toString() === selectedItem
                   ? Colors.white
                   : Colors.black,
             },
-          ]}>
+          }}>
           {item.name}
-        </Text>
+        </RegularText>
       </Pressable>
     );
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.checkListTitle}>Кем хотите стать?</Text>
+      <RegularText style={styles.checkListTitle}>Кем хотите стать?</RegularText>
       <View style={styles.checkListContainer}>
         {jobData.map(item => (
           <View key={item.id}>{renderItem({item})}</View>

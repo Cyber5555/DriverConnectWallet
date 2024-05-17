@@ -3,7 +3,6 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import React, {memo, useCallback, useEffect, useState} from 'react';
 import {
-  Text,
   StyleSheet,
   Platform,
   ScrollView,
@@ -23,6 +22,8 @@ import {User, useAuth} from '../../../Context/AuthContext';
 import {driverLicenseCountryRequest} from '../../ScannerDriverLicense/driverLicenseCountrySlice';
 import {createAccountRequest} from './createAccountSlice';
 import moment from 'moment';
+import {showMessage} from 'react-native-flash-message';
+import {BoldText} from '../../../Includes/BoldText';
 
 const currentYear = new Date().getFullYear();
 const yearsCount = 70;
@@ -33,7 +34,7 @@ const dataYear: DataType[] = Array.from({length: yearsCount}, (_, index) => {
 });
 
 const DataDriverLicenseComponent = () => {
-  const {authUser, login} = useAuth();
+  const {authUser, login, loadUserData} = useAuth();
   const dispatch = useDispatch<AppDispatch>();
   const insets = useSafeAreaInsets();
   const {driverLicenseCountryData} = useSelector(
@@ -150,11 +151,28 @@ const DataDriverLicenseComponent = () => {
               add_car_status: '0',
             };
             login(userData);
-            navigation.navigate('ScannerHomeTechnical');
+            loadUserData(false);
+          } else {
+            showMessage({
+              message: result.payload?.yandex_error?.message,
+              animated: true,
+              type: 'danger',
+              duration: 5000,
+              icon: {
+                icon: 'danger',
+                position: 'left',
+                props: {},
+              },
+              style: {
+                height: insets.top + 50,
+                paddingTop: Platform.OS === 'android' ? insets.top + 10 : 10,
+              },
+            });
           }
         })
-        .catch(err => {
+        .catch((err: any) => {
           console.error(err);
+          console.log('📢 [DataDriverLicense.tsx:158]', err.response);
         });
     }
   }, [
@@ -171,7 +189,8 @@ const DataDriverLicenseComponent = () => {
     scanning_person_full_name_last_name,
     scanning_person_full_name_middle_name,
     login,
-    navigation,
+    loadUserData,
+    insets.top,
   ]);
 
   return (
@@ -189,9 +208,9 @@ const DataDriverLicenseComponent = () => {
           style={{marginTop: 20}}
           onPress={() => navigation.goBack()}
         />
-        <Text style={styles.pageTitle}>
+        <BoldText style={styles.pageTitle}>
           Регистрация в агрегаторе: Данные водительского удостоверения
-        </Text>
+        </BoldText>
         <DefaultInput
           onChangeText={text => {
             setLicenseNumber(text);
@@ -199,7 +218,6 @@ const DataDriverLicenseComponent = () => {
           }}
           placeholder={'6636747474774'}
           value={licenseNumber}
-          keyboardType={'number-pad'}
           label={'Номер Докемента'}
           error={errorData.licenseNumber}
         />
@@ -274,7 +292,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   pageTitle: {
-    fontWeight: 'bold',
     fontSize: 17,
     marginTop: 10,
     marginBottom: 20,

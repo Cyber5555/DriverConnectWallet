@@ -1,16 +1,11 @@
 import React, {Dispatch, SetStateAction, memo, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ViewStyle,
-  TouchableOpacity,
-} from 'react-native';
+import {View, StyleSheet, ViewStyle, TouchableOpacity} from 'react-native';
 import Colors from '../Includes/Colors';
 import MaskInput from 'react-native-mask-input';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
+import {RegularText} from '../Includes/RegularText';
 
 type DateInputProps = {
   label: string;
@@ -44,7 +39,7 @@ const DateInputComponent = ({
 
   return (
     <View>
-      <Text style={styles.label}>{label}</Text>
+      <RegularText style={styles.label}>{label}</RegularText>
       <TouchableOpacity
         style={{
           ...styles.container,

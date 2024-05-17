@@ -1,6 +1,7 @@
 import React, {memo, useState, useEffect} from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
+import {RegularText} from '../Includes/RegularText';
 
 type CountdownTimerProps = {
   duration: number;
@@ -38,13 +39,13 @@ const CountdownTimerComponent = ({duration, onResend}: CountdownTimerProps) => {
         disabled={timer !== 0}
         style={styles.resendCodeLeft}>
         <Feather name={'message-square'} size={24} />
-        <Text style={styles.resendCode} role={'button'}>
+        <RegularText style={styles.resendCode}>
           Отправить код повторно
-        </Text>
+        </RegularText>
       </TouchableOpacity>
-      <Text style={styles.timerText}>{`00:${
+      <RegularText style={styles.timerText}>{`00:${
         timer < 10 ? `0${timer}` : timer
-      }`}</Text>
+      }`}</RegularText>
     </View>
   );
 };
@@ -56,7 +57,6 @@ const styles = StyleSheet.create({
   },
   timerText: {
     fontSize: 18,
-    fontWeight: 'bold',
     marginRight: 10,
   },
   resendCodeContainer: {
@@ -72,7 +72,6 @@ const styles = StyleSheet.create({
   },
   resendCode: {
     fontSize: 15,
-    fontWeight: 'bold',
   },
 });
 

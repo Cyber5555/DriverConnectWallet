@@ -1,7 +1,9 @@
 import React, {memo} from 'react';
-import {Text, StyleSheet, Modal, View} from 'react-native';
+import {StyleSheet, Modal, View} from 'react-native';
 import {AdaptiveButton} from './AdaptiveButton';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {BoldText} from '../Includes/BoldText';
+import {RegularText} from '../Includes/RegularText';
 
 type SuccessAuthModalProps = {
   visible: boolean;
@@ -20,17 +22,25 @@ const SuccessAuthModalComponent = ({
       animationType={'slide'}
       statusBarTranslucent={true}>
       <View style={[styles.container, {paddingTop: insets.top + 20}]}>
-        <Text style={styles.title}>Мы зарегистрировали вас в Яндекс Go</Text>
+        <BoldText style={styles.title}>
+          Мы зарегистрировали вас в Яндекс Go
+        </BoldText>
         <View style={styles.wrapper}>
-          <Text style={styles.infos}>1) Скачайте приложение «Яндекс Про»</Text>
-          <Text style={styles.infos}>
+          <RegularText style={styles.infos}>
+            1) Скачайте приложение «Яндекс Про»
+          </RegularText>
+          <RegularText style={styles.infos}>
             2) Войдите в него по вашему номеру телефона и выберете парк “Grot”
-          </Text>
-          <Text style={styles.infos}>
+          </RegularText>
+          <RegularText style={styles.infos}>
             3) Подтвердите документы указанные при регистрации{' '}
-          </Text>
-          <Text style={styles.infos}>4) Пройдите фотоконтроль автомобиля</Text>
-          <Text style={styles.infos}>5) Приступайте к выполнению заказов.</Text>
+          </RegularText>
+          <RegularText style={styles.infos}>
+            4) Пройдите фотоконтроль автомобиля
+          </RegularText>
+          <RegularText style={styles.infos}>
+            5) Приступайте к выполнению заказов.
+          </RegularText>
         </View>
         <AdaptiveButton onPress={onPress}>Далее</AdaptiveButton>
       </View>

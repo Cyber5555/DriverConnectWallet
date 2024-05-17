@@ -7,7 +7,6 @@ import {
   useWindowDimensions,
   Platform,
   Modal,
-  Alert,
 } from 'react-native';
 import {
   Camera,
@@ -24,7 +23,6 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootNavigationProps} from '../../Router/RootNavigation';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Defs, Mask, Rect, Svg} from 'react-native-svg';
-import {Text} from 'react-native';
 import {
   SendDriverLicensePayload,
   sendDriverLicenseRequest,
@@ -39,6 +37,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
+import {RegularText} from '../../Includes/RegularText';
 
 type FlashType = 'auto' | 'off' | 'on' | undefined;
 type PageType = 'first' | 'second';
@@ -78,7 +77,6 @@ const CameraDriverComponent = () => {
 
   const onError = useCallback((error: CameraRuntimeError) => {
     console.error(error);
-    Alert.alert('error');
   }, []);
 
   const takePhoto = useCallback(async () => {
@@ -107,6 +105,7 @@ const CameraDriverComponent = () => {
           setPage('second');
         } else if (imagePath && page === 'second') {
           imageData.current = [...imageData.current, imagePath];
+          cardRotateAnimation.value = '0deg';
           setPage('first');
           setNoCamera(true);
         }
@@ -129,22 +128,31 @@ const CameraDriverComponent = () => {
               image2: imageData.current[1],
               authUser,
             }),
-          ).then(result => {
-            if (isSendDriverLicensePayload(result.payload)) {
-              const payload: SendDriverLicensePayload = result.payload;
-              if (payload.status) {
-                login({
-                  driver_license_front_photo: imageData.current[0],
-                  driver_license_back_photo: imageData.current[1],
-                });
-                setNoCamera(false);
-                navigation.navigate('DataDriverLicense');
-                imageData.current = [];
+          )
+            .then((result: {payload: any}) => {
+              if (isSendDriverLicensePayload(result.payload)) {
+                const payload: SendDriverLicensePayload = result.payload;
+
+                if (payload.status) {
+                  login({
+                    driver_license_front_photo: imageData.current[0],
+                    driver_license_back_photo: imageData.current[1],
+                  });
+                  setNoCamera(false);
+                  navigation.navigate('DataDriverLicense');
+                  imageData.current = [];
+                } else {
+                  imageData.current = [];
+                  console.log('📢 [CameraScreenDriver.tsx:145]', payload);
+                }
               } else {
-                imageData.current = [];
+                console.log(result.payload);
+                navigation.navigate('ScannerHomeDriver');
               }
-            }
-          });
+            })
+            .catch(error => {
+              console.log('📢 [CameraScreenDriver.tsx:149]', error);
+            });
         }
       } catch (error) {
         console.error('Error taking photo:', error);
@@ -199,6 +207,7 @@ const CameraDriverComponent = () => {
           />
         </View>
       </Modal>
+
       <AntDesign
         name={'arrowleft'}
         color={Colors.white}
@@ -214,36 +223,25 @@ const CameraDriverComponent = () => {
             width: height,
           },
         ]}>
-        <Text style={styles.cameraText}>
+        <RegularText style={styles.cameraText}>
           {page === 'first'
             ? 'Водительское удостоверение: лицевая сторона'
             : 'Водительское удостоверение задняя сторона'}
-        </Text>
+        </RegularText>
       </View>
       {device && hasPermission && (
-        <View
-          style={[
-            StyleSheet.absoluteFillObject,
-            styles.cameraFrame,
-            {
-              top: width / 2.5,
-              height: height / 1.7,
-              width: width - 100,
-            },
-          ]}>
-          <Camera
-            ref={cameraRef}
-            style={styles.camera}
-            device={device}
-            photo={true}
-            resizeMode={'cover'}
-            focusable={true}
-            isActive={isFocused}
-            format={format}
-            pixelFormat={'yuv'}
-            onError={onError}
-          />
-        </View>
+        <Camera
+          ref={cameraRef}
+          style={StyleSheet.absoluteFill}
+          device={device}
+          photo={true}
+          resizeMode={'cover'}
+          focusable={true}
+          isActive={isFocused}
+          format={format}
+          pixelFormat={'yuv'}
+          onError={onError}
+        />
       )}
       <Svg width={'100%'} height={'100%'} style={styles.svg}>
         <Defs>
@@ -342,10 +340,6 @@ const styles = StyleSheet.create({
   cameraText: {
     color: Colors.white,
   },
-  cameraFrame: {
-    left: 50,
-  },
-  camera: {flex: 1},
   cameraButton: {
     position: 'absolute',
     backgroundColor: Colors.white,

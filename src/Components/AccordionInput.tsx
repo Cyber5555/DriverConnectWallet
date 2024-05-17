@@ -1,5 +1,5 @@
 import React, {memo} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {StyleSheet, TouchableOpacity, View} from 'react-native';
 import Colors from '../Includes/Colors';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Animated, {
@@ -7,6 +7,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import {RegularText} from '../Includes/RegularText';
 const AnimatedFontAwesome = Animated.createAnimatedComponent(FontAwesome);
 
 export type DataType = {
@@ -33,7 +34,7 @@ const RenderItem = ({
 }) => {
   return (
     <TouchableOpacity onPress={() => onPress(item)} style={styles.renderItem}>
-      <Text>{item.name}</Text>
+      <RegularText>{item.name}</RegularText>
     </TouchableOpacity>
   );
 };
@@ -82,7 +83,7 @@ const AccordionInputComponent = ({
 
   return (
     <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && <RegularText style={styles.label}>{label}</RegularText>}
       <TouchableOpacity
         style={{
           ...styles.touchableOpacity,
@@ -91,7 +92,7 @@ const AccordionInputComponent = ({
           },
         }}
         onPress={toggleHeight}>
-        <Text
+        <RegularText
           style={{
             ...styles.input,
             ...{
@@ -99,7 +100,7 @@ const AccordionInputComponent = ({
             },
           }}>
           {value.name ? value.name : placeholder}
-        </Text>
+        </RegularText>
         <AnimatedFontAwesome
           name={'angle-down'}
           style={[styles.angleDown, angleStyle]}
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
   },
   input: {
     paddingHorizontal: 10,
-    fontSize: 20,
+    fontSize: 16,
   },
   angleDown: {
     position: 'absolute',

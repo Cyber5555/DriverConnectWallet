@@ -12,9 +12,12 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		3D33C5D143B742B295E85C89 /* Roboto-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7D7C9A17CC0A4D448C01386C /* Roboto-Regular.ttf */; };
+		54E2E3E192494144A8CF545C /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 558E2CAAF26446B496D70981 /* Roboto-Medium.ttf */; };
 		61F9B8962BD9240A00BE70EE /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = 61F9B8952BD9240900BE70EE /* Fonts */; };
 		7699B88040F8A987B510C191 /* libPods-DriverConnectWallet-DriverConnectWalletTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-DriverConnectWallet-DriverConnectWalletTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		94FEFAAEFF7845FE88986175 /* Roboto-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 20DACDE77B7340308A2499CD /* Roboto-Bold.ttf */; };
 		96899EB37F9879CE27F1D361 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = D6EF329B2A31BAA26678D337 /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
 
@@ -40,14 +43,17 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = DriverConnectWallet/main.m; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = DriverConnectWallet/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-DriverConnectWallet-DriverConnectWalletTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DriverConnectWallet-DriverConnectWalletTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		20DACDE77B7340308A2499CD /* Roboto-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Bold.ttf"; path = "../src/Assets/fonts/Roboto-Bold.ttf"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-DriverConnectWallet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DriverConnectWallet.debug.xcconfig"; path = "Target Support Files/Pods-DriverConnectWallet/Pods-DriverConnectWallet.debug.xcconfig"; sourceTree = "<group>"; };
+		558E2CAAF26446B496D70981 /* Roboto-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Medium.ttf"; path = "../src/Assets/fonts/Roboto-Medium.ttf"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-DriverConnectWallet.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DriverConnectWallet.release.xcconfig"; path = "Target Support Files/Pods-DriverConnectWallet/Pods-DriverConnectWallet.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-DriverConnectWallet-DriverConnectWalletTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DriverConnectWallet-DriverConnectWalletTests.debug.xcconfig"; path = "Target Support Files/Pods-DriverConnectWallet-DriverConnectWalletTests/Pods-DriverConnectWallet-DriverConnectWalletTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-DriverConnectWallet.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DriverConnectWallet.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		61F9B8952BD9240900BE70EE /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Fonts; path = "../node_modules/react-native-vector-icons/Fonts"; sourceTree = "<group>"; };
+		7D7C9A17CC0A4D448C01386C /* Roboto-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Roboto-Regular.ttf"; path = "../src/Assets/fonts/Roboto-Regular.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = DriverConnectWallet/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-DriverConnectWallet-DriverConnectWalletTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DriverConnectWallet-DriverConnectWalletTests.release.xcconfig"; path = "Target Support Files/Pods-DriverConnectWallet-DriverConnectWalletTests/Pods-DriverConnectWallet-DriverConnectWalletTests.release.xcconfig"; sourceTree = "<group>"; };
-		D6EF329B2A31BAA26678D337 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; name = PrivacyInfo.xcprivacy; path = DriverConnectWallet/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		D6EF329B2A31BAA26678D337 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = DriverConnectWallet/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -104,6 +110,17 @@
 			name = DriverConnectWallet;
 			sourceTree = "<group>";
 		};
+		1C9BBCDA5E3A4E81AC7BCAA0 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				20DACDE77B7340308A2499CD /* Roboto-Bold.ttf */,
+				558E2CAAF26446B496D70981 /* Roboto-Medium.ttf */,
+				7D7C9A17CC0A4D448C01386C /* Roboto-Regular.ttf */,
+			);
+			name = Resources;
+			path = "";
+			sourceTree = "<group>";
+		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -130,6 +147,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				1C9BBCDA5E3A4E81AC7BCAA0 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -253,6 +271,9 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				96899EB37F9879CE27F1D361 /* PrivacyInfo.xcprivacy in Resources */,
+				94FEFAAEFF7845FE88986175 /* Roboto-Bold.ttf in Resources */,
+				54E2E3E192494144A8CF545C /* Roboto-Medium.ttf in Resources */,
+				3D33C5D143B742B295E85C89 /* Roboto-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

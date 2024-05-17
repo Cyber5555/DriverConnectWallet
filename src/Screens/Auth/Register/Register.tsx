@@ -1,6 +1,6 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, {memo, useCallback, useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {DefaultInput} from '../../../Components/DefaultInput';
 import {DateInput} from '../../../Components/DateInput';
@@ -19,6 +19,7 @@ import {regionRequest} from './regionSlice';
 import {createAccountRequest} from '../../Data/DataDriverLicense/createAccountSlice';
 import moment from 'moment';
 import {SuccessAuthModal} from '../../../Components/SuccessAuthModal';
+import {BoldText} from '../../../Includes/BoldText';
 
 const RegisterComponent = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -157,12 +158,12 @@ const RegisterComponent = () => {
         visible={successModal}
         onPress={() => {
           setSuccessModal(false);
-          loadUserData();
+          loadUserData(true);
         }}
       />
-      <Text style={styles.pageTitle}>
+      <BoldText style={styles.pageTitle}>
         Регистрация в агрегаторе: Личные данные
-      </Text>
+      </BoldText>
 
       <ScrollView
         style={styles.scrollView}
@@ -252,7 +253,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   pageTitle: {
-    fontWeight: '400',
     fontSize: 19,
     marginTop: 20,
   },

@@ -1,6 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {Http} from '../../../../http';
-import {User} from '../../../Context/AuthContext';
+import {User, useAuth} from '../../../Context/AuthContext';
 
 interface CreateNewCarData {
   callsign: string;
@@ -74,6 +74,12 @@ export const createNewCarRequest = createAsyncThunk<
       );
       return response.data;
     } catch (error: any) {
+      if (error.response.data.message === 'Unauthenticated.') {
+        const {loadUserData, logout} = useAuth();
+
+        logout();
+        loadUserData(false);
+      }
       return rejectWithValue(error.response.data);
     }
   },
@@ -90,8 +96,8 @@ const createNewCarSlice = createSlice({
       })
       .addCase(createNewCarRequest.fulfilled, (state, action) => {
         const {data} = action.payload;
-        state.loading = false;
         state.technical_data = data;
+        state.loading = false;
       })
       .addCase(createNewCarRequest.rejected, state => {
         state.loading = false;

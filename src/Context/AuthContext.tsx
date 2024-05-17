@@ -33,7 +33,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   hasTokenNotAuth: boolean;
   notCar: boolean;
-  loadUserData: () => void;
+  loadUserData: (bool: boolean) => void;
 }
 
 export const AuthContext = createContext({} as AuthContextType);
@@ -67,61 +67,74 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
     [authUser],
   );
 
-  const logout = useCallback(async () => {
-    try {
-      await AsyncStorage.clear();
-      setAuthUser(null);
-      setIsAuthenticated(false);
-      setHasTokenNotAuth(false);
-      setNotCar(false);
-    } catch (error) {
-      console.error('Error clearing authUser data:', error);
-    }
-  }, []);
+  const loadUserData = useCallback(
+    async (load: boolean) => {
+      if (load) {
+        setIsLoading(true);
+      }
 
-  const loadUserData = useCallback(async () => {
-    setIsLoading(true);
-
-    const authData = await AsyncStorage.getItem('authUser');
-
-    if (authData) {
-      const userData: User = JSON.parse(authData);
-      setAuthUser(userData);
-      dispatch(authUserInfoRequest({token: userData.token}))
-        .then(async (result: {payload: any}) => {
-          const {user, status, message} = result.payload;
-          if (status) {
-            const authUserRequestData: User = {
-              ...userData,
-              add_car_status: user?.add_car_status,
-              create_account_status: user?.create_account_status,
-              token: userData.token,
-            };
-            await AsyncStorage.setItem(
-              'authUser',
-              JSON.stringify(authUserRequestData),
-            );
-            setIsAuthenticated(authentication(authUserRequestData));
-            setHasTokenNotAuth(hasTokenNotAuthenticated(authUserRequestData));
-            setNotCar(registeredButNotCar(authUserRequestData));
-          } else if (message === 'Unauthenticated.') {
+      const authData = await AsyncStorage.getItem('authUser');
+      if (authData) {
+        const userData: User = JSON.parse(authData);
+        setAuthUser(userData);
+        console.log('📢 [AuthContext.tsx:80]', authData);
+        dispatch(authUserInfoRequest({token: userData.token}))
+          .then(async (result: {payload: any}) => {
+            const {user, status, message} = result.payload;
+            if (status) {
+              const authUserRequestData: User = {
+                ...userData,
+                add_car_status: user?.add_car_status,
+                create_account_status: user?.create_account_status,
+                token: userData.token,
+              };
+              await AsyncStorage.setItem(
+                'authUser',
+                JSON.stringify(authUserRequestData),
+              );
+              setIsAuthenticated(authentication(authUserRequestData));
+              setHasTokenNotAuth(hasTokenNotAuthenticated(authUserRequestData));
+              setNotCar(registeredButNotCar(authUserRequestData));
+            } else if (message === 'Unauthenticated.') {
+              await AsyncStorage.removeItem('authUser');
+              setAuthUser(null);
+              setIsAuthenticated(false);
+              setHasTokenNotAuth(false);
+              setNotCar(false);
+            }
+          })
+          .catch(async error => {
             await AsyncStorage.removeItem('authUser');
             setAuthUser(null);
             setIsAuthenticated(false);
             setHasTokenNotAuth(false);
             setNotCar(false);
-          }
-        })
-        .catch(error => {
-          console.error('Error dispatching authUserInfoRequest:', error);
-        });
+
+            console.error('Error dispatching authUserInfoRequest:', error);
+          });
+      }
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
+    },
+    [dispatch],
+  );
+
+  const logout = useCallback(async () => {
+    try {
+      await AsyncStorage.removeItem('authUser');
+      setAuthUser(null);
+      setIsAuthenticated(false);
+      setHasTokenNotAuth(false);
+      setNotCar(false);
+      loadUserData(true);
+    } catch (error) {
+      console.error('Error clearing authUser data:', error);
     }
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-  }, [dispatch]);
+  }, [loadUserData]);
+
   useEffect(() => {
-    loadUserData();
+    loadUserData(true);
   }, [dispatch, loadUserData]);
 
   return (

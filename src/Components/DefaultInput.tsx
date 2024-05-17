@@ -6,9 +6,9 @@ import {
   ViewStyle,
   TextInput,
   KeyboardTypeOptions,
-  Text,
 } from 'react-native';
 import Colors from '../Includes/Colors';
+import {RegularText} from '../Includes/RegularText';
 
 type DefaultInputProps = {
   containerStyle?: ViewStyle;
@@ -31,7 +31,7 @@ const DefaultInputComponent = ({
 }: DefaultInputProps) => {
   return (
     <View style={{...styles.container, ...containerStyle}}>
-      <Text style={styles.label}>{label}</Text>
+      <RegularText style={styles.label}>{label}</RegularText>
       <TextInput
         value={value}
         style={[
