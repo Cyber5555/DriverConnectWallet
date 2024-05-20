@@ -1,114 +1,53 @@
-import React, {memo, useCallback, useEffect} from 'react';
-import {View, StyleSheet, StatusBar, FlatList, Linking} from 'react-native';
+import React, {memo, useCallback, useEffect, useState} from 'react';
+import {
+  View,
+  StyleSheet,
+  StatusBar,
+  FlatList,
+  Linking,
+  RefreshControl,
+} from 'react-native';
 import Colors from '../../Includes/Colors';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import {MoneyButton} from '../../Components/MoneyButton';
 import {WhatsAppIcon} from '../../Includes/configIcons';
 import {useDispatch, useSelector} from 'react-redux';
 import {AppDispatch, RootState} from '../../store/store';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootNavigationProps} from '../../Router/RootNavigation';
 import {BoldText} from '../../Includes/BoldText';
 import {RegularText} from '../../Includes/RegularText';
 import {MediumText} from '../../Includes/MediumText';
 import {socialDataRequest} from '../Auth/Login/socialDataSlice';
+import {
+  clearData,
+  getBalanceHistoryRequest,
+  incrementCurrentPage,
+} from './getBalanceHistorySlice';
+import {useAuth} from '../../Context/AuthContext';
+import moment from 'moment';
+import LoaderKit from 'react-native-loader-kit';
 
 type DataType = {
-  process: string;
-  message: string;
+  title: string;
+  payment_method: string;
   price: string;
   date: string;
-  id: string;
+  color: string;
 };
-
-const data: DataType[] = [
-  {
-    process: 'Вывод средств',
-    message: 'ждет подтвоождения парком',
-    price: '-1500',
-    date: '13.05.2024',
-    id: String(Math.random() * 10),
-  },
-  {
-    process: 'Вывод средств',
-    message: 'Бани, переводит деньги',
-    price: '-1000',
-    date: '13.05.2024',
-    id: String(Math.random() * 10),
-  },
-  {
-    process: 'Вывод средств',
-    message: 'Отправлено в бани получато',
-    price: '15000',
-    date: '13.05.2024',
-    id: String(Math.random() * 10),
-  },
-  {
-    process: 'Вывод средств',
-    message: 'ждет подтвоождения парком',
-    price: '22300',
-    date: '13.05.2024',
-    id: String(Math.random() * 10),
-  },
-  {
-    process: 'Вывод средств',
-    message: 'Бани, переводит деньги',
-    price: '1400',
-    date: '13.05.2024',
-    id: String(Math.random() * 10),
-  },
-  {
-    process: 'Вывод средств',
-    message: 'Отправлено в бани получато',
-    price: '-3000',
-    date: '13.05.2024',
-    id: String(Math.random() * 10),
-  },
-  {
-    process: 'Вывод средств',
-    message: 'Бани, переводит деньги',
-    price: '1400',
-    date: '13.05.2024',
-    id: String(Math.random() * 10),
-  },
-  {
-    process: 'Вывод средств',
-    message: 'Отправлено в бани получато',
-    price: '-3000',
-    date: '13.05.2024',
-    id: String(Math.random() * 10),
-  },
-  {
-    process: 'Вывод средств',
-    message: 'Бани, переводит деньги',
-    price: '1400',
-    date: '13.05.2024',
-    id: String(Math.random() * 10),
-  },
-  {
-    process: 'Вывод средств',
-    message: 'Отправлено в бани получато',
-    price: '-3000',
-    date: '13.05.2024',
-    id: String(Math.random() * 10),
-  },
-];
 
 const RenderItem = ({item}: {item: DataType}) => {
   return (
     <View style={styles.renderItem}>
-      <View style={styles.renderItemWrapper}>
-        <RegularText style={styles.renderItemTitle}>{item.process}</RegularText>
-        <MediumText style={styles.renderItemPrice}>{item.price} ₽</MediumText>
+      <View style={styles.renderItemWrapperFirst}>
+        <RegularText style={styles.renderItemTitle}>{item.title}</RegularText>
       </View>
-      <View style={styles.renderItemWrapper}>
-        <RegularText style={styles.renderItemMessage} numberOfLines={1}>
-          {item.message}
+      <View style={styles.renderItemWrapperSecond}>
+        <MediumText style={{...styles.renderItemPrice, ...{color: item.color}}}>
+          {item.price} ₽
+        </MediumText>
+        <RegularText style={styles.renderItemDate}>
+          {moment(new Date(item.date)).format('DD.MM.YYYY')}
         </RegularText>
-        <RegularText style={styles.renderItemDate}>{item.date}</RegularText>
       </View>
     </View>
   );
@@ -116,13 +55,16 @@ const RenderItem = ({item}: {item: DataType}) => {
 
 const HomeComponent = () => {
   const insets = useSafeAreaInsets();
+  const {authUser} = useAuth();
+  const [refreshing, setRefreshing] = useState<boolean>(false);
   const dispatch = useDispatch<AppDispatch>();
   const {balance} = useSelector((state: RootState) => state.authUserInfoSlice);
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootNavigationProps>>();
   const {telegram, whatsApp} = useSelector(
     (state: RootState) => state.socialDataSlice,
   );
+  const {get_balance_history, current_page, next_page_url, loading} =
+    useSelector((state: RootState) => state.getBalanceHistorySlice);
+
   const linkToTelegram = useCallback(() => {
     Linking.openURL(telegram);
   }, [telegram]);
@@ -131,25 +73,54 @@ const HomeComponent = () => {
     Linking.openURL(whatsApp);
   }, [whatsApp]);
 
+  const getBalanceHistoryFirst = useCallback(() => {
+    dispatch(
+      getBalanceHistoryRequest({token: authUser?.token, current_page: 1}),
+    );
+  }, [authUser?.token, dispatch]);
+
   useEffect(() => {
     dispatch(socialDataRequest());
-  }, [dispatch]);
+    getBalanceHistoryFirst();
+  }, [dispatch, getBalanceHistoryFirst]);
+
+  const handlePagination = useCallback(() => {
+    if (next_page_url) {
+      dispatch(incrementCurrentPage());
+      dispatch(
+        getBalanceHistoryRequest({
+          token: authUser?.token,
+          current_page: current_page + 1,
+        }),
+      );
+    }
+  }, [authUser?.token, current_page, dispatch, next_page_url]);
+
+  const loaderPagination = () => {
+    return loading && !refreshing ? (
+      <View style={styles.loaderPagination}>
+        <LoaderKit
+          style={styles.load}
+          name={'BallSpinFadeLoader'}
+          color={Colors.black}
+        />
+      </View>
+    ) : null;
+  };
+
+  const handleRefresh = () => {
+    dispatch(clearData());
+    setRefreshing(true);
+    getBalanceHistoryFirst();
+    setTimeout(() => setRefreshing(false), 1000);
+  };
 
   return (
-    <View
-      style={{
-        ...styles.container,
-        ...{paddingTop: insets.top},
-      }}>
+    <View style={{...styles.container, paddingTop: insets.top}}>
       <StatusBar animated={true} translucent={true} barStyle={'dark-content'} />
 
       <View style={styles.headerBar}>
-        <AntDesign
-          name={'user'}
-          color={Colors.black}
-          size={28}
-          onPress={() => navigation.navigate('User')}
-        />
+        <View style={styles.empty} />
         <BoldText style={styles.parkName}>Парк Grot</BoldText>
         <View style={styles.wrapperIcon}>
           <FontAwesome
@@ -162,21 +133,24 @@ const HomeComponent = () => {
         </View>
       </View>
       <RegularText style={styles.price}>
-        {balance !== undefined ? balance.toFixed(0) + ' ₽' : 0 + ' ₽'}
+        {balance !== undefined ? balance.toFixed(0) + ' ₽' : '0 ₽'}
       </RegularText>
 
       <View style={styles.buttons}>
         <MoneyButton iconType={'Input'} />
         <MoneyButton iconType={'OutPut'} />
       </View>
-      <View
-        style={{...styles.flatListContainer, ...{marginBottom: insets.bottom}}}>
+      <View style={styles.flatListContainer}>
         <FlatList
-          data={data}
+          data={get_balance_history}
           showsVerticalScrollIndicator={true}
-          renderItem={({item}) => {
-            return <RenderItem item={item} />;
-          }}
+          renderItem={({item}) => <RenderItem item={item} />}
+          ListFooterComponent={loaderPagination}
+          onEndReached={handlePagination}
+          keyExtractor={(item, index) => index.toString()}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          }
         />
       </View>
     </View>
@@ -213,12 +187,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: 20,
   },
+  empty: {
+    width: 50,
+  },
   flatListContainer: {
     flex: 1,
     marginTop: 20,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    // overflow: 'hidden',
     backgroundColor: Colors.white,
     elevation: 8,
     shadowColor: Colors.black,
@@ -231,29 +207,39 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: Colors.gray,
     padding: 10,
-    rowGap: 10,
-  },
-  renderItemWrapper: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+  },
+  renderItemWrapperFirst: {
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    width: '65%',
+  },
+  renderItemWrapperSecond: {
+    alignItems: 'flex-end',
+    justifyContent: 'space-between',
+    width: '35%',
   },
   renderItemTitle: {
     color: Colors.dark,
-    fontSize: 20,
+    fontSize: 18,
   },
   renderItemPrice: {
     color: Colors.dark,
     fontSize: 18,
   },
-  renderItemMessage: {
-    fontSize: 13,
-    color: Colors.darkGray,
-    maxWidth: '70%',
-  },
   renderItemDate: {
     fontSize: 13,
     color: Colors.darkGray,
+  },
+  load: {
+    width: 35,
+    height: 35,
+  },
+  loaderPagination: {
+    flex: 1,
+    padding: 20,
+    alignItems: 'center',
   },
 });
 

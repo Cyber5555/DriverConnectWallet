@@ -13,6 +13,8 @@ import getCarModelSlice from '../Screens/Data/DataAuto/getCarModelSlice';
 import carColorSlice from '../Screens/Data/DataAuto/carColorSlice';
 import createNewCarSlice from '../Screens/Data/DataAuto/createNewCarSlice';
 import authUserInfoSlice from '../Screens/Home/authUserInfoSlice';
+import getBalanceHistorySlice from '../Screens/Home/getBalanceHistorySlice';
+import getFAQSlice from '../Screens/Payments/getFAQSlice';
 
 const rootReducer = combineReducers({
   loginSlice,
@@ -29,6 +31,8 @@ const rootReducer = combineReducers({
   carColorSlice,
   createNewCarSlice,
   authUserInfoSlice,
+  getBalanceHistorySlice,
+  getFAQSlice,
 });
 
 const store = configureStore({

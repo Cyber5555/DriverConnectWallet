@@ -9,9 +9,8 @@ import {DataAuto} from '../Screens/Data/DataAuto/DataAuto';
 import {ScannerHomeDriver} from '../Screens/ScannerDriverLicense/ScannerHomeDriver';
 import {CameraScreenDriver} from '../Screens/ScannerDriverLicense/CameraScreenDriver';
 import {DataDriverLicense} from '../Screens/Data/DataDriverLicense/DataDriverLicense';
-import {Home} from '../Screens/Home/Home';
 import {useAuth} from '../Context/AuthContext';
-import {User} from '../Screens/User/User';
+import {TabBar} from './TabBar';
 
 const Stack = createNativeStackNavigator<RootNavigationProps>();
 
@@ -29,7 +28,10 @@ export type RootNavigationProps = {
   DataAuto: undefined;
   Home: undefined;
   ScannerHomeTechnical: undefined;
-  User: undefined;
+  Profile: undefined;
+  TabBar: undefined;
+  Trips: undefined;
+  Payments: undefined;
 };
 
 const RootNavigation = () => {
@@ -88,20 +90,7 @@ const RootNavigation = () => {
           )}
         </Stack.Group>
       ) : (
-        <Stack.Group>
-          <Stack.Screen name="Home" component={Home} />
-          <Stack.Screen name="User" component={User} />
-
-          <Stack.Screen
-            name="ScannerHomeTechnical"
-            component={ScannerHomeTechnical}
-          />
-          <Stack.Screen
-            name="CameraScreenTechnical"
-            component={CameraScreenTechnical}
-          />
-          <Stack.Screen name="DataAuto" component={DataAuto} />
-        </Stack.Group>
+        <Stack.Screen name="TabBar" component={TabBar} />
       )}
     </Stack.Navigator>
   );

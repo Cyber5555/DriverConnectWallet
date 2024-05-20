@@ -67,7 +67,6 @@ const authUserInfoSlice = createSlice({
       })
       .addCase(authUserInfoRequest.fulfilled, (state, {payload}) => {
         const {user, car, balance} = payload;
-        console.log('📢 [authUserInfoSlice.ts:71]', payload);
         state.auth_user_info = user;
         state.auth_user_car_info = car;
         state.balance = balance;

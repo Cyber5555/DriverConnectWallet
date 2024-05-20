@@ -77,7 +77,6 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
       if (authData) {
         const userData: User = JSON.parse(authData);
         setAuthUser(userData);
-        console.log('📢 [AuthContext.tsx:80]', authData);
         dispatch(authUserInfoRequest({token: userData.token}))
           .then(async (result: {payload: any}) => {
             const {user, status, message} = result.payload;

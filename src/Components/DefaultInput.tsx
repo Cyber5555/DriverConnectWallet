@@ -17,7 +17,7 @@ type DefaultInputProps = {
   value: string;
   keyboardType?: KeyboardTypeOptions;
   label: string;
-  error: boolean;
+  error?: boolean;
 };
 
 const DefaultInputComponent = ({
@@ -55,14 +55,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   input: {
-    flex: 1,
     backgroundColor: Colors.gray,
     paddingHorizontal: 10,
     borderRadius: 8,
     fontSize: 20,
     color: Colors.dark,
-    height: 55,
     borderWidth: 1,
+    width: '100%',
+    height: 55,
   },
   label: {
     marginBottom: 5,
