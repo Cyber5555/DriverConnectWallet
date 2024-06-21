@@ -1,23 +1,28 @@
 import React, {memo} from 'react';
 import {View, StyleSheet, Dimensions} from 'react-native';
 import {BarChart} from 'react-native-chart-kit';
+import {RootState} from '../store/store';
+import {useSelector} from 'react-redux';
+import Colors from '../Includes/Colors';
 
 const CharterComponent = () => {
+  const {charter} = useSelector(
+    (state: RootState) => state.getOrderHistorySlice,
+  );
+
+  const date = charter.map(item => item.date);
+  const colors = charter.map(() => () => Colors.lightBlue);
+  const sum = charter.map(item => (!isNaN(item.sum) ? item.sum : '0'));
+
   return (
     <View>
       <BarChart
         data={{
-          labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+          labels: date,
           datasets: [
             {
-              data: [
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-                Math.random() * 100,
-              ],
+              data: sum,
+              colors: colors,
             },
           ],
         }}
@@ -30,27 +35,23 @@ const CharterComponent = () => {
           backgroundColor: '#fbfbfb',
           backgroundGradientFrom: '#ffffff',
           backgroundGradientTo: '#ffffff',
-          decimalPlaces: 1,
+          // decimalPlaces: 1,
           color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
           labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
           backgroundGradientFromOpacity: 1,
           backgroundGradientToOpacity: 1,
-          propsForBackgroundLines: {},
+          barRadius: 0,
+          barPercentage: 1,
           style: {
             borderRadius: 16,
           },
-          // propsForHorizontalLabels: {
-          //   strokeWidth: '2',
-          //   stroke: '#ffffff',
-          // },
-          // propsForDots: {
-          //   r: '6',
-          //   strokeWidth: '2',
-          //   stroke: '#ffffff',
-          // },
         }}
-        // bezier
+        showValuesOnTopOfBars={true}
+        showBarTops={false}
         style={styles.chart}
+        withInnerLines={true}
+        withCustomBarColorFromData={true}
+        flatColor={true}
       />
     </View>
   );

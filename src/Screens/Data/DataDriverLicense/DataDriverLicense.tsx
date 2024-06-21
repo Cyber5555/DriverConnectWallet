@@ -172,7 +172,6 @@ const DataDriverLicenseComponent = () => {
         })
         .catch((err: any) => {
           console.error(err);
-          console.log('📢 [DataDriverLicense.tsx:158]', err.response);
         });
     }
   }, [

@@ -19,6 +19,9 @@ interface CreateNewCarData {
 export interface CreateNewCarPayload {
   status: boolean;
   data: any;
+  yandex_error?: {
+    message: string;
+  };
 }
 
 interface CreateNewCarState {

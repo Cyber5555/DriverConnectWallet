@@ -28,7 +28,9 @@ import {RegularText} from '../../../Includes/RegularText';
 
 const LoginComponent = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const {loading, error} = useSelector((state: RootState) => state.loginSlice);
+  const {loading, error, errorMessage} = useSelector(
+    (state: RootState) => state.loginSlice,
+  );
   const {telegram, whatsApp} = useSelector(
     (state: RootState) => state.socialDataSlice,
   );
@@ -113,7 +115,12 @@ const LoginComponent = () => {
               setLengthError(false);
             }}
             setUnmaskedPhone={text => setUnmaskedPhone(text)}
+            page={'login'}
+            setIsOpenModalPhone={() => {}}
           />
+          {error && (
+            <RegularText style={styles.error}>{errorMessage}</RegularText>
+          )}
           <AdaptiveButton
             containerStyle={{marginBottom: 10}}
             loading={loading}
@@ -170,6 +177,10 @@ const styles = StyleSheet.create({
   haveAQuestions: {
     textAlign: 'center',
     marginTop: 30,
+  },
+  error: {
+    color: Colors.lightRed,
+    marginBottom: 10,
   },
 });
 

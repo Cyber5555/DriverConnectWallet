@@ -9,5 +9,8 @@ export default {
   green: '#319240',
   lightBlue: '#2cabea',
   lightYellow: '#f9e536',
-  red: '#f00',
+  wheat: '#f5e8d7',
+  orange: '#ffa500',
+  lightRed: '#ff5555',
+  lightGreen: '#6db600',
 };

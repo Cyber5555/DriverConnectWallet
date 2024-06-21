@@ -9,9 +9,17 @@ interface Props {
   numberOfLines?: number;
 }
 
-export const RegularText = ({style, children, onPress}: Props) => {
+export const RegularText = ({
+  style,
+  children,
+  onPress,
+  numberOfLines,
+}: Props) => {
   return (
-    <Text style={{...styles.text, ...style}} onPress={onPress}>
+    <Text
+      style={{...styles.text, ...style}}
+      onPress={onPress}
+      numberOfLines={numberOfLines}>
       {children}
     </Text>
   );

@@ -157,12 +157,12 @@ const LoginOTPComponent = () => {
             }}
             tintColor={
               error.message === 'Неверный код потверждения'
-                ? Colors.red
+                ? Colors.lightRed
                 : Colors.green
             }
             offTintColor={
               error.message === 'Неверный код потверждения'
-                ? Colors.red
+                ? Colors.lightRed
                 : 'transparent'
             }
             ref={otpInputRef}

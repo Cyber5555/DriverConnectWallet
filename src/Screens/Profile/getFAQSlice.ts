@@ -1,4 +1,3 @@
-// https://driverconnect.digiluys.com/api/get_faqs
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {Http} from '../../../http';
 

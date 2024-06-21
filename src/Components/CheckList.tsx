@@ -46,7 +46,7 @@ const CheckLIstComponent = ({
               item.id.toString() === selectedItem
                 ? Colors.lightBlue
                 : Colors.gray,
-            borderColor: error ? Colors.red : 'transparent',
+            borderColor: error ? Colors.lightRed : 'transparent',
           },
         ]}>
         <RegularText

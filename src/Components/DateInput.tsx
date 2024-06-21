@@ -45,7 +45,7 @@ const DateInputComponent = ({
           ...styles.container,
           ...containerStyle,
           ...{
-            borderColor: error ? Colors.red : 'transparent',
+            borderColor: error ? Colors.lightRed : 'transparent',
           },
         }}
         onPress={() => setOpen(true)}>

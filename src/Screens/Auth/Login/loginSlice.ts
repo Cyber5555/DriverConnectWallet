@@ -1,6 +1,5 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {Http} from '../../../../http';
-import {useAuth} from '../../../Context/AuthContext';
 
 interface LoginData {
   phone: string;
@@ -19,21 +18,21 @@ interface LoginState {
   loading: boolean;
   code: string;
   error: boolean | undefined;
+  errorMessage: string;
 }
 
 const initialState: LoginState = {
   loading: false,
   code: '',
   error: false,
+  errorMessage: '',
 };
 
-// Define the type for rejectWithValue
 type RejectWithValue = {
-  message: {
-    phone: [''];
-    status: boolean;
-    validation_error: boolean;
-  };
+  message: string;
+  phone?: string[];
+  status?: boolean;
+  validation_error?: boolean;
 };
 
 export const loginRequest = createAsyncThunk<
@@ -56,12 +55,6 @@ export const loginRequest = createAsyncThunk<
 
     return response.data;
   } catch (error: any) {
-    if (error.response.data.message === 'Unauthenticated.') {
-      const {loadUserData, logout} = useAuth();
-
-      logout();
-      loadUserData(true);
-    }
     return rejectWithValue(error.response.data);
   }
 });
@@ -81,13 +74,15 @@ const loginSlice = createSlice({
         state.loading = false;
         state.code = payload.code;
       })
-      .addCase(loginRequest.rejected, (state, action) => {
+      .addCase(loginRequest.rejected, (state, {payload}) => {
         state.loading = false;
-        const error = action.payload as RejectWithValue;
+        const error = payload as RejectWithValue;
         state.code = '';
         if (error.message) {
           state.error = true;
+          state.errorMessage = error?.message;
         }
+        console.log('📢 [loginSlice.ts:84]', payload);
       });
   },
 });

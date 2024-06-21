@@ -37,7 +37,7 @@ const DefaultInputComponent = ({
         style={[
           styles.input,
           {
-            borderColor: error ? Colors.red : 'transparent',
+            borderColor: error ? Colors.lightRed : 'transparent',
           },
         ]}
         onChangeText={onChangeText}

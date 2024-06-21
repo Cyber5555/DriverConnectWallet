@@ -14,7 +14,12 @@ import carColorSlice from '../Screens/Data/DataAuto/carColorSlice';
 import createNewCarSlice from '../Screens/Data/DataAuto/createNewCarSlice';
 import authUserInfoSlice from '../Screens/Home/authUserInfoSlice';
 import getBalanceHistorySlice from '../Screens/Home/getBalanceHistorySlice';
-import getFAQSlice from '../Screens/Payments/getFAQSlice';
+import getFAQSlice from '../Screens/Profile/getFAQSlice';
+import getOrderHistorySlice from '../Screens/Trips/getOrderHistorySlice';
+import getTariffAndOptionSlice from '../Screens/Profile/getTariffAndOptionSlice';
+import updateTariffAndOptionsSlice from '../Screens/Profile/updateTariffAndOptionsSlice';
+import updatePhoneSlice from '../Screens/Profile/updatePhoneSlice';
+import updateOTPSlice from '../Screens/Profile/updateOTPSlice';
 
 const rootReducer = combineReducers({
   loginSlice,
@@ -33,6 +38,11 @@ const rootReducer = combineReducers({
   authUserInfoSlice,
   getBalanceHistorySlice,
   getFAQSlice,
+  getOrderHistorySlice,
+  getTariffAndOptionSlice,
+  updateTariffAndOptionsSlice,
+  updatePhoneSlice,
+  updateOTPSlice,
 });
 
 const store = configureStore({

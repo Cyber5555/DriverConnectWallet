@@ -96,52 +96,57 @@ const DataAutoComponent = () => {
 
   const getModel = useCallback(
     (markItem: any) => {
-      dispatch(getCarModelRequest({authUser, mark_id: markItem.id})).then(
-        (resultModes: any) => {
-          if (resultModes.payload.status) {
-            const model = resultModes.payload.data;
+      dispatch(getCarModelRequest({authUser, mark_id: markItem.id}))
+        .unwrap()
+        .then(resultModes => {
+          if (resultModes.status) {
+            const model = resultModes.data;
             const modelItem: any = Object.values(model).find(
               (item: any) =>
-                item?.name.toLowerCase() ===
-                technical_data.model_name.toLowerCase(),
+                item?.name?.toLowerCase() ===
+                technical_data?.model_name?.toLowerCase(),
             );
 
             setCarModels(modelItem !== undefined && modelItem);
           }
-          dispatch(carColorRequest({authUser})).then((resultColor: any) => {
-            if (resultColor.payload.status) {
-              const color = resultColor.payload.data;
-              const colorItem: any = Object.values(color).find(
-                (item: any) =>
-                  item?.name.toLowerCase() ===
-                  technical_data.color_name.toLowerCase(),
-              );
+          dispatch(carColorRequest({authUser}))
+            .unwrap()
+            .then(resultColor => {
+              if (resultColor) {
+                const color = resultColor.data;
+                const colorItem: any = Object.values(color).find(
+                  (item: any) =>
+                    item?.name?.toLowerCase() ===
+                    technical_data?.color_name?.toLowerCase(),
+                );
 
-              setColors(colorItem || {name: 'Белый', id: ''});
-            }
-          });
-        },
-      );
+                setColors(colorItem || {name: 'Белый', id: ''});
+              }
+            });
+        });
     },
     [authUser, dispatch, technical_data.color_name, technical_data.model_name],
   );
 
   useEffect(() => {
-    dispatch(getCarMarksRequest({authUser})).then((resultMarks: any) => {
-      if (resultMarks.payload.status) {
-        const mark = resultMarks.payload.data;
+    dispatch(getCarMarksRequest({authUser}))
+      .unwrap()
+      .then(resultMarks => {
+        if (resultMarks.status) {
+          const mark = resultMarks.data;
 
-        const markItem: any = Object.values(mark).find(
-          (item: any) =>
-            item?.name.toLowerCase() === technical_data.mark_name.toLowerCase(),
-        );
+          const markItem: any = Object.values(mark).find(
+            (item: any) =>
+              item?.name?.toLowerCase() ===
+              technical_data?.mark_name?.toLowerCase(),
+          );
 
-        if (markItem) {
-          setCarMarks(markItem);
-          getModel(markItem);
+          if (markItem) {
+            setCarMarks(markItem);
+            getModel(markItem);
+          }
         }
-      }
-    });
+      });
   }, [authUser, dispatch, getModel, technical_data.mark_name]);
 
   useEffect(() => {
@@ -170,6 +175,7 @@ const DataAutoComponent = () => {
     });
 
     if (!disableButton) {
+      console.log('📢 [DataAuto.tsx:178]', technical_data);
       const carData = {
         authUser,
         callsign: inputData.gnAuto,
@@ -177,20 +183,23 @@ const DataAutoComponent = () => {
         mark_name: carMarks.name,
         model_name: carModels?.name,
         year: Number(inputData.year.name),
-        vin: technical_data.vin,
+        vin: inputData.vin,
         color_name: colors.name,
         car_license_front_photo: authUser?.car_license_front_photo,
         car_license_back_photo: authUser?.car_license_back_photo,
       };
 
       dispatch(createNewCarRequest(carData))
-        .then((result: any) => {
-          if (result.payload.status) {
+        .unwrap()
+        .then(result => {
+          if (result.status) {
             setSuccessModal(true);
           } else {
-            console.log('📢 [DataAuto.tsx:191]', result.payload);
             showMessage({
-              message: result.payload?.yandex_error?.message,
+              message:
+                result?.yandex_error?.message === undefined
+                  ? 'asdas'
+                  : result?.yandex_error?.message,
               animated: true,
               type: 'danger',
               duration: 5000,
@@ -208,7 +217,7 @@ const DataAutoComponent = () => {
         })
         .catch(error => {
           showMessage({
-            message: error.response,
+            message: error.message.vin,
             animated: true,
             type: 'danger',
             duration: 5000,
@@ -233,8 +242,8 @@ const DataAutoComponent = () => {
     inputData.vin,
     inputData.year,
     disableButton,
+    technical_data,
     authUser,
-    technical_data.vin,
     dispatch,
     insets.top,
   ]);
@@ -291,17 +300,19 @@ const DataAutoComponent = () => {
           }}
           error={errorData.carMarks}
         />
-        <AccordionInput
-          label={'Модель'}
-          placeholder={'Не указан'}
-          data={car_model}
-          value={carModels}
-          setValue={text => {
-            setCarModels(text);
-            setErrorData({...errorData, carModels: false});
-          }}
-          error={errorData.carModels}
-        />
+        {carMarks.name !== '' && (
+          <AccordionInput
+            label={'Модель'}
+            placeholder={'Не указан'}
+            data={car_model}
+            value={carModels}
+            setValue={text => {
+              setCarModels(text);
+              setErrorData({...errorData, carModels: false});
+            }}
+            error={errorData.carModels}
+          />
+        )}
         <AccordionInput
           placeholder={'Год выпуска'}
           data={dataYear}

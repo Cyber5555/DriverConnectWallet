@@ -88,7 +88,7 @@ const AccordionInputComponent = ({
         style={{
           ...styles.touchableOpacity,
           ...{
-            borderColor: error ? Colors.red : 'transparent',
+            borderColor: error ? Colors.lightRed : 'transparent',
           },
         }}
         onPress={toggleHeight}>

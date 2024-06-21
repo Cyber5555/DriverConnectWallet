@@ -23,6 +23,7 @@ export interface User {
   car_license_front_photo?: string;
   create_account_status?: string;
   add_car_status?: string;
+  user_id?: string;
 }
 
 interface AuthContextType {
@@ -80,12 +81,14 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
         dispatch(authUserInfoRequest({token: userData.token}))
           .then(async (result: {payload: any}) => {
             const {user, status, message} = result.payload;
+
             if (status) {
               const authUserRequestData: User = {
                 ...userData,
                 add_car_status: user?.add_car_status,
                 create_account_status: user?.create_account_status,
                 token: userData.token,
+                user_id: user.id,
               };
               await AsyncStorage.setItem(
                 'authUser',
@@ -109,7 +112,7 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
             setHasTokenNotAuth(false);
             setNotCar(false);
 
-            console.error('Error dispatching authUserInfoRequest:', error);
+            console.log('Error dispatching authUserInfoRequest:', error);
           });
       }
       setTimeout(() => {
@@ -168,6 +171,17 @@ export const AuthProvider = ({children}: {children: React.ReactNode}) => {
 };
 
 export const useAuth = (): AuthContextType => React.useContext(AuthContext);
+
+export const useAuthHandler = () => {
+  const {loadUserData, logout} = useAuth();
+
+  const handleUnauthenticated = useCallback(() => {
+    logout();
+    loadUserData(true);
+  }, [logout, loadUserData]);
+
+  return {handleUnauthenticated};
+};
 
 const authentication = (authUser: User | null): boolean => {
   if (!authUser) {

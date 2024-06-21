@@ -143,10 +143,8 @@ const CameraDriverComponent = () => {
                   imageData.current = [];
                 } else {
                   imageData.current = [];
-                  console.log('📢 [CameraScreenDriver.tsx:145]', payload);
                 }
               } else {
-                console.log(result.payload);
                 navigation.navigate('ScannerHomeDriver');
               }
             })
